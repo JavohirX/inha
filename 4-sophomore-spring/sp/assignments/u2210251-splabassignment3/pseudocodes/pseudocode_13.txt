@@ -1,0 +1,47 @@
+Declare variables:
+    inp_msg: string = "Encrypted message: "
+    out_msg: string = "Decrypted message: %s"
+    new_line: string = "\n"
+    input: array of characters
+    output: array of characters
+
+_start:
+    // Write "Encrypted message: " to stdout
+    WriteStringToStdout(inp_msg, length(inp_msg))
+
+    // Read input from stdin
+    ReadStringFromStdin(input)
+
+    // Decrypt the message
+    DecryptMessage(input, output)
+
+    // Write "Decrypted message: " followed by decrypted message to stdout
+    WriteFormattedStringToStdout(out_msg, output, length(output))
+
+    // Exit the program
+    ExitProgram()
+
+DecryptMessage(input, output):
+    for each character in input:
+        decrypted_character = character - 10
+        append decrypted_character to output
+
+WriteStringToStdout(string, length):
+    // System call to write string to stdout
+    // Here you would typically call the appropriate system function to print the string
+    // For example, in C: printf(string);
+
+ReadStringFromStdin(buffer):
+    // System call to read string from stdin
+    // Here you would typically call the appropriate system function to read input from the user
+    // For example, in C: scanf("%s", buffer);
+
+WriteFormattedStringToStdout(format_string, output, length):
+    // System call to write formatted string to stdout
+    // Here you would typically call the appropriate system function to print the formatted string
+    // For example, in C: printf(format_string, output);
+
+ExitProgram():
+    // System call to exit the program
+    // Here you would typically call the appropriate system function to exit the program
+    // For example, in C: exit(0);

@@ -1,0 +1,55 @@
+﻿________________
+
+
+Statement of Purpose: Master of Science in Computer Science
+Introduction: From Curiosity to Architecture
+My journey into the world of computing began not with a formal lesson, but with a challenge born of isolation. At eleven years old, when my brother brought home a laptop to our small town in far-east Uzbekistan, I found myself with a powerful machine but no internet connection and no pre-installed games. To entertain myself, I began to dismantle the only thing I had: the operating system itself. I spent my afternoons tweaking registry entries, customizing Windows themes, and writing basic scripts to automate the tedious aspects of system management. At the time, I did not know the word "programming"; I simply knew that I wanted to understand how logic could be harnessed to create a personalized digital environment. My brother recognized this innate curiosity and suggested I pursue software development. That suggestion set me on a path toward a field that demands both creative thinking and rigorous logic—a path that has led me from ranking in the top of my class at INHA University to working at the scale of Yandex.
+Today, my fascination has evolved from "how things work" to "how things scale." Having spent the last few years building solo projects and working within one of the world's largest search engines, I have identified a critical gap in my expertise: the transition from building functional software to engineering high-load, production-grade infrastructure. I am applying for the Master of Science in Computer Science to bridge this gap, specifically seeking to master the principles of distributed systems, performance optimization, and the bridge between Large Language Models (LLMs) and backend architecture.
+________________
+
+
+Academic Foundation and the Pursuit of Excellence
+My academic career at INHA University in Tashkent has been defined by a relentless drive to master the theoretical underpinnings of Computer Science while maintaining a practical, project-oriented mindset. I have consistently ranked in the top 10 out of 280 students, earning Dean’s List recognition for five consecutive semesters. This academic rigor was not merely a matter of personal pride but a necessity; coming from an underserved region, I had to fund my own education. My performance eventually earned me a 50% tuition discount and, ultimately, a full academic scholarship from the Sturgeon Foundation, which recognized my combination of academic achievement, volunteering, and technical initiative.
+However, I have always believed that classrooms only go so far. My true education occurred when I applied theoretical concepts to real-world problems. This began with a Hospital Management System written entirely in C using raw MySQL queries. Without the abstractions of modern frameworks, I was forced to confront the realities of memory management and systems thinking. This project taught me more about the relationship between software and hardware than any textbook could, instilling in me a "systems-first" mentality that I carry into every project.
+________________
+
+
+Technical Evolution: From Solo Projects to High-Load Problems
+My development experience spans several languages and domains, but my focus has increasingly sharpened on backend engineering. I built wishbord.uz, a birthday forum platform, where I implemented a RESTful API using Django and the Django Rest Framework (DRF). Deploying this system with Docker on Azure and maintaining a 99.9% uptime gave me my first taste of lifecycle management and cloud infrastructure.
+The project that truly tested my limits, however, was 1buy.uz—a shopping assistant designed to scrape product data from major marketplaces like Ozon, Wildberries, and Uzum in real time. This project was less about "making something look good" and entirely about "making something work reliably under pressure". To succeed, I had to solve genuinely difficult backend problems:
+* Concurrency: I managed parallel scraping pipelines using Python’s concurrent.futures to ensure real-time data delivery.
+* Anti-Bot Navigation: I used Playwright to bypass sophisticated anti-bot protections and CAPTCHAs.
+* Performance Tuning: I spent weeks tuning Gunicorn worker configurations to handle parallel requests without system failure.
+This experience highlighted the inherent limitations of my current toolkit. While I have built systems handling thousands of requests, I have yet to design for millions. I have seen how Python facilitates rapid development, but I have also realized that for true performance at scale, I must master languages like C++ and Go, and understand the deep architectural trade-offs that enable high-concurrency systems.
+________________
+
+
+Professional Perspective: The Yandex Experience
+My perspective on engineering was fundamentally transformed during my tenure as a Lead Specialist in Search Quality at Yandex. My role involved evaluating website relevance and quality, which allowed me to peek behind the curtain of a search engine that processes millions of queries daily. I saw firsthand the scale of the infrastructure required to handle extreme loads and the constantly evolving nature of ranking systems.
+While I spent my time assessing these systems, I realized that my true ambition lay in building them. I want to understand the "magic" of how a query is routed through a distributed network, how data is indexed across thousands of shards, and how $O(1)$ or $O(\log n)$ performance is maintained even as the dataset grows to petabytes. My time at Yandex taught me that in a large engineering organization, code is not just a personal tool; it is a shared asset that must adhere to rigorous review standards and production-grade expectations. This professional environment is where I want to spend my career, and a Master’s degree is the essential next step to gain the deep, production-level engineering experience I currently lack.
+________________
+
+
+Research and Competitive Spirit
+My interest in backend systems is complemented by an active involvement in research and competitive programming. Currently, I am investigating how input context size affects the accuracy of LLM stock prediction. This research involves building complex data pipelines between DigitalOcean PostgreSQL and Google Cloud Vertex AI, supported by the Mirzo Ulugbek Vorislari grant. We are specifically exploring the relationship:
+$$\text{Accuracy} = f(\text{Context Size}, \text{Token Density}, \text{Temporal Decay})$$
+This project bridges my interest in backend infrastructure with the cutting edge of AI, exploring how we can efficiently feed massive datasets into models to yield actionable insights.
+Furthermore, my competitive experience—reaching the Republican ICPC finals and placing second at a Turingday hackathon—has honed my ability to write efficient code under strict time constraints. These competitions taught me that the most elegant solution is often the one that respects the constraints of time and space complexity, a principle that is central to high-load backend engineering.
+________________
+
+
+Leadership, Community, and Social Impact
+Beyond technical skills, I believe that a true engineer is also a community builder. Throughout my university years, I have balanced my studies with extensive volunteer work. I co-founded a startup club, volunteered with the IT Community of Uzbekistan, and hosted events like Roadshow. I have also mentored younger developers through the Academic Support Club, sharing the knowledge I gained while fighting my way from a small town to the Dean’s List.
+My background as a student who had to navigate university without initial financial support has made me passionate about creating opportunities for others. I have seen how the tech sector can transform lives, and I want to be a catalyst for that transformation in Central Asia. I have led teams, mentored students, and organized events for hundreds of people, but I recognize that my growth as an engineering leader requires a deeper understanding of "Western" or "global" corporate culture—the best practices in shared infrastructure and cross-functional collaboration that lead the world.
+________________
+
+
+Long-Term Vision and Goals
+My graduation from INHA University in June 2026 marks the end of my "wandering" phase and the beginning of my specialization. My immediate goal following a Master’s degree is to join a top-tier tech company, such as Yandex, to refine my skills in a high-pressure, professional environment. I want to master the art of building something within a large organization, utilizing code review standards and shared infrastructure to create production-grade services.
+However, my ultimate ambition has remained unchanged since my school days: to return to Uzbekistan and start a software company. Our country is on the verge of a technological revolution, and I want to be among those who shape its future. I plan to bring high-load backend expertise back to Uzbekistan’s growing tech sector, creating opportunities for talented individuals from underserved regions like my hometown. My goal is to build a company that not only solves local problems but competes on a global scale, utilizing the best practices of distributed systems and performance optimization that I will master during this program.
+________________
+
+
+Conclusion
+My journey from a curious eleven-year-old tweaking Windows registry entries to a top-ranked Computer Science student and Yandex specialist has been driven by a relentless passion for technology and a commitment to making a meaningful difference. I have built the foundation—the technical skills, the academic record, and the community involvement. What I need now is the specialized knowledge that only a rigorous Master’s program can provide.
+I am eager to contribute my experience in scraping, API development, and search quality to your academic community. I am ready to stop being a solo developer and start becoming a world-class systems engineer. I am confident that your program is the ideal environment for me to gain the expertise necessary to build the next generation of high-load services and, ultimately, to transform the technological landscape of my home country.

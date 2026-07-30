@@ -1,0 +1,101 @@
+\documentclass[12pt]{article}
+\RequirePackage[2020-02-02]{latexrelease}
+\usepackage[T1]{fontenc}
+\usepackage[utf8x]{inputenc}  
+\usepackage[english]{babel}
+\usepackage{times}  % Times Roman font
+%\usepackage{helvet} % Helvetica font
+%\renewcommand{\familydefault}{\sfdefault} % font
+\usepackage{graphicx} % se uso picture with pdflatex
+\usepackage[pdftex]{hyperref} % To enable hyperlinks with pdflatex
+\usepackage{tikz}  % used ALSO for positioning of logo 
+
+\usepackage{listings}  % needed to write SQL - see next
+
+% NB: Every team can adapt the setting of their SQL code
+% by changing the parameters in their \lstset - here is a defalut:
+\lstset{language=SQL, %=\ttfamily,
+        basicstyle=\ttfamily,
+        keywordstyle=\ttfamily,
+        backgroundcolor=\color{backcolour},  
+        basicstyle={\small\ttfamily},
+        belowskip=3mm,
+        breakatwhitespace=true,
+        breaklines=true,
+        classoffset=0,
+        columns=flexible,
+        commentstyle=\color{dkgreen},
+        framexleftmargin=0.25em,
+%        frameshape={}{}{}{}, %To remove to vertical lines on left, set `frameshape={}{}{}{}`
+        keywordstyle=\color{blue},
+        numbers=none, %If you want line numbers, set `numbers=left`
+        numberstyle=\tiny\color{gray},
+        showstringspaces=false,
+        stringstyle=\color{mauve},
+        tabsize=3,
+        xleftmargin =1em
+}
+
+%%% FORMST / MARGINS %%%
+\setlength{\oddsidemargin}{0.05 true in}
+\setlength{\evensidemargin}{0.05 true in}
+\setlength{\textwidth}{6.2 true in}
+\setlength{\textheight}{9.20 in} % 9.80 in
+\setlength{\topmargin}{-0.35 in} % -0.55 in
+
+%%\evensidemargin 36pt\oddsidemargin 36pt\textwidth 5.4in
+%%\topmargin 0pt \addtolength{\textheight}{1.0truein}
+
+
+%%%%%%%%%%%%   MACROS AND PACKAGES SPECIFIC TO **YOUR** HOMEWORK  %%%%%%%%%%%%%%
+%%%%%%%%%
+%%%%%%%%%
+%%%%%%%%%
+
+% TO DO
+
+%%%%%%%%%
+%%%%%%%%%
+%%%%%%%%%
+%%%%%%%%%%%% END MACROS SPECIFIC TO THIS BOOK %%%%%%%%%%%%%%%
+
+
+\includeonly{}
+
+
+\begin{document}
+%\noindent\rule{\textwidth}{1pt}
+%\pagenumbering{roman}
+%\pagestyle{plain}
+\thispagestyle{empty}
+\input{DB-HWcover}
+
+\begingroup
+\hypersetup{linkcolor=black}
+%\hypersetup{linkcolor=blue}
+
+\bibliographystyle{plain}      
+%\bibliographystyle{abbrv}     % as plain except uses abbreviations for first names,
+                               % month names, and journal names
+
+\pagenumbering{arabic}
+\setcounter{page}{1}
+\pagestyle{plain}
+
+\section{Here first section}
+
+\subsection{Here first subsection (if any)}
+
+
+\section{Here second section}
+
+
+
+
+
+\newpage
+\bibliography{% ... % here path in your file-system where to locate
+              % the bibliography entries (if any)
+}
+
+\end{document}

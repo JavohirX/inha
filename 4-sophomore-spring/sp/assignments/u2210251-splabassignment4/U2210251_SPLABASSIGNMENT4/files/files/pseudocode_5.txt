@@ -1,0 +1,100 @@
+Include header files
+
+function main(arguments, inputArgs):
+    declare variables:
+        saveFileName
+        startTime
+        endTime
+        i, j, n, nxn
+        fA, fB
+
+    if arguments == 5 then
+        saveFileName = inputArgs[3]
+        open fA = fopen(inputArgs[1], "r")
+        open fB = fopen(inputArgs[2], "r")
+        n = atoi(inputArgs[4])
+        nxn = n * n
+        allocate memory for matrices A, B, and C
+
+        read matrices A and B from files fA and fB, respectively
+
+        for each multiplication method func from 0 to 5 do
+            initialize C to zeros
+            startTime = clock()
+
+            perform matrix multiplication based on the current method func
+
+            endTime = clock()
+            calculate time taken and save it
+
+            save the result matrix C to a file with appropriate naming
+
+        free memory allocated for matrix C
+
+        close files fA and fB
+    else
+        print error message about incorrect format
+
+function resultSaving(C, fileName, type, n):
+    open file fC = fopen(fileName, "w")
+
+    for each row i in C do
+        for each column j in C[i] do
+            write C[i][j] to file fC followed by a tab
+        write a newline to file fC
+
+    close file fC
+    remove the last 4 characters from fileName
+
+function timeTaken(startTime, endTime, method, n):
+    open file fileTiming = fopen("TIME_TAKEN_CPU", "a")
+    calculate total_t as (endTime - startTime) / CLOCKS_PER_SEC
+    print total_t and method to console
+    write total_t, method, and matrix dimensions to file fileTiming
+    close file fileTiming
+
+function mmatijk(A, B, C, n):
+    for each row i in A do
+        for each column j in B do
+            sum = 0
+            for k from 0 to n-1 do
+                sum += A[i][k] * B[k][j]
+            C[i][j] = sum
+
+function mmatjik(A, B, C, n):
+    for each column j in B do
+        for each row i in A do
+            sum = 0
+            for k from 0 to n-1 do
+                sum += A[j][k] * B[k][i]
+            C[j][i] = sum
+
+function mmatjki(A, B, C, n):
+    for each column j in B do
+        for each row i in A do
+            sum = 0
+            for k from 0 to n-1 do
+                sum += A[j][i] * B[i][k]
+            C[j][k] = sum
+
+function mmatkji(A, B, C, n):
+    for each column k in B do
+        for each row i in A do
+            r = B[k][j]
+            for each column j in A do
+                C[i][j] += A[i][k] * r
+
+function mmatkij(A, B, C, n):
+    for each column k in B do
+        for each row i in A do
+            r = A[i][k]
+            for each column j in B do
+                C[i][j] += r * B[k][j]
+
+function mmatikj(A, B, C, n):
+    for each row i in A do
+        for each column k in B do
+            r = A[i][k]
+            for each column j in B do
+                C[i][j] += r * B[k][j]
+

@@ -1,0 +1,39 @@
+INCLUDE Stdio.h
+INCLUDE Stdlib.h
+INCLUDE "iLibVector.h"
+
+FUNCTION main
+    DECLARE x, y, z as POINTERS TO INTEGER
+    DECLARE n, s, k as INTEGERS
+
+    PRINT "Please, enter constant k: "
+    READ k
+    
+    PRINT "Please, enter constant s for sorting (0 or 1): "
+    READ s
+
+    PRINT "Please, enter size of arrays: "
+    READ n
+    
+    x <- ALLOCATE ARRAY OF n INTEGERS
+    y <- ALLOCATE ARRAY OF n INTEGERS
+    z <- ALLOCATE ARRAY OF n INTEGERS
+    
+    PRINT "Please, enter elements of the first vector: "
+    CALL ifill_vec(x, n)
+    
+    PRINT "Please, enter elements of the second vector: "
+    CALL ifill_vec(y, n)
+    
+    PRINT "The addition is equal to:"
+    CALL iadd_vec(x, y, z, n)
+    CALL iprint_vec(z, n)
+    
+    // Similarly, perform subtraction, multiplication, division, division by constant, multiplication by constant, and sorting
+
+    DEALLOCATE x
+    DEALLOCATE y
+    DEALLOCATE z
+
+    RETURN 0
+END FUNCTION

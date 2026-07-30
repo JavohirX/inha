@@ -1,0 +1,36 @@
+Declare format as "%s\n"
+Declare format2 as "%ld\n"
+Declare buffer1 with empty 12 bytes
+Declare messageForInput as "Input: \n Enter the value for n = "
+Declare messageForOutput as "Output : \n\t n! = "
+
+_start():
+	print("Enter the value for =")
+	buffer1 = take user input
+	
+	For every character1 in buffer1:
+		if (character1 is ASCII LF ): #LF is line feed with 0x0A numeration
+			stop the loop
+		exponentRegister *= 10
+	
+	For every character1 in buffer1:
+		if (character1 is ASCII LF ): #LF is line feed with 0x0A numeration
+			stop the loop
+		resultRegister = character1 - '0' #now resultRegister = integer value of character1
+		sumRegister = sumRegister + resultRegister * exponentRegister
+		exponentRegister divided by 10
+	#sum now contains the converted number from ASCII to decimal
+	_factorialCalc:
+	
+	if(sumRegister is 0):
+		registerA is 1
+		_done()
+	registerA = sumRegister
+	while(sumRegister is not 1)
+		sumRegister = sumRegister - 1  # n-1
+		registerA = registerA * sumRegister # n(n-1)
+ 	_done()
+
+	_done():
+	print("Output : \n\t n! = " + registerA)
+	exit	

@@ -1,0 +1,1 @@
+cmd_/home/javohir/hw3/5/keyboard_scancode_module.ko := ld -r  -m elf_x86_64 -z noexecstack   --build-id=sha1  -T scripts/module.lds -o /home/javohir/hw3/5/keyboard_scancode_module.ko /home/javohir/hw3/5/keyboard_scancode_module.o /home/javohir/hw3/5/keyboard_scancode_module.mod.o;  true

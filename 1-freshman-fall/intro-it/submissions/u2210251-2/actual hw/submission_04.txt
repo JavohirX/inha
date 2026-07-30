@@ -1,0 +1,4 @@
+10000010 - excess notation
+01101000 - 2's complement notation
+00000010 - floating point notation
+all of them equal to 2

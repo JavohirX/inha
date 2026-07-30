@@ -1,0 +1,44 @@
+---
+pid: 14204
+cwd: "D:\Inha\5-junior-fall\db\others"
+command: "python -c \"
+import os, re
+
+def estimate_rle(src_path):
+    with open(src_path, 'rb') as f:
+        data = f.read()
+    page = data.find(b'%%Page:')
+    m = re.search(rb'DisplayImage\\r?\\n(?:[^\\r\\n]+\\r?\\n){3}(\\d+) (\\d+)\\r?\\n(\\d+)\\r?\\n(\\d+)\\r?\\n', data[page:])
+    cols, rows = int(m.group(1)), int(m.group(2))
+    img_start = page + m.end()
+    end_marker = data.rfind(b'\\nend\\n')
+    img_section = data[img_start:end_marker]
+    hexdata = b''.join(line.strip() for line in img_section.splitlines() if line.strip() and not line.strip().startswith(b'%'))
+    pixels = [hexdata[i:i+6] for i in range(0, len(hexdata), 6)]
+    out_len = 0
+    i = 0
+    while i < len(pixels):
+        j = i + 1
+        while j < len(pixels) and pixels[j] == pixels[i] and (j - i) < 256:
+            j += 1
+        out_len += 8  # 6 hex + 2 run byte hex
+        i = j
+    header_len = img_start
+    footer_len = len(data) - end_marker
+    new_lines = (out_len + 75) // 76
+    new_size = header_len + footer_len + out_len + new_lines
+    return os.path.getsize(src_path), new_size
+
+root = r'D:\\Inha\\5-junior-fall\\db\\others'
+orig = new = 0
+for dp,_,fns in os.walk(root):
+    for fn in fns:
+        if fn.lower().endswith('.eps'):
+            o,n = estimate_rle(os.path.join(dp, fn))
+            orig += o; new += n
+print(f'Estimated: {orig/1024/1024:.1f} MB -> {new/1024/1024:.1f} MB ({100*new/orig:.1f}%)')
+\""
+started_at: 2026-07-15T10:33:33.640Z
+running_for_ms: 220003   
+---
+Estimated: 378.4 MB -> 62.1 MB (16.4%)

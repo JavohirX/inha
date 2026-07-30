@@ -1,0 +1,4 @@
+sum = 1;
+for(int i = o; i < n; i++){
+  sum += 3(n-1);
+}

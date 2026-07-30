@@ -1,0 +1,9 @@
+int[] numbers = n;
+for(int i = 0; numbers.Length > 1; i++){
+if(i > numbers.Length - 1){
+i = 0;
+}
+int numToRemove = numbers[i];
+numbers = numbers.Where(val => val != numToRemove).ToArray();
+}
+return numbers[];

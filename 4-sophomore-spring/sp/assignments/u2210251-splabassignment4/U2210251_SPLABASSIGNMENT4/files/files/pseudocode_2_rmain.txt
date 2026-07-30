@@ -1,0 +1,47 @@
+INCLUDE Stdio.h
+INCLUDE Stdlib.h
+INCLUDE "matrixRealLib.h"
+
+FUNCTION main
+    DECLARE n as INTEGER
+    DECLARE a, b, c as POINTERS TO DOUBLES
+
+    PRINT "Please enter the size of your nxn matrices: "
+    READ n
+
+    a <- ALLOCATE ARRAY OF n * n DOUBLES
+    b <- ALLOCATE ARRAY OF n * n DOUBLES
+    c <- ALLOCATE ARRAY OF n * n DOUBLES
+
+    PRINT "Please enter your first matrix: "
+    CALL rmatfill(a, n)
+
+    PRINT "Please enter your second matrix: "
+    CALL rmatfill(b, n)
+
+    PRINT "The addition of matrices is equal to: "
+    CALL rmatadd(a, b, c, n)
+    CALL rmatprint(c, n)
+
+    PRINT "The subtraction of matrices is equal to: "
+    CALL rmatsub(a, b, c, n)
+    CALL rmatprint(c, n)
+
+    PRINT "The multiplication of matrices is equal to: "
+    CALL rmatmult(a, b, c, n)
+    CALL rmatprint(c, n)
+
+    PRINT "The transpose of matrix A is equal to: "
+    CALL rmattrans(a, c, n)
+    CALL rmatprint(c, n)
+
+    PRINT "The transpose of matrix B is equal to: "
+    CALL rmattrans(b, c, n)
+    CALL rmatprint(c, n)
+
+    DEALLOCATE a
+    DEALLOCATE b
+    DEALLOCATE c
+
+    RETURN 0
+END FUNCTION

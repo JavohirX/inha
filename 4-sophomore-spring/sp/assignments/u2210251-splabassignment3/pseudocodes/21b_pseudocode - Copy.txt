@@ -1,0 +1,67 @@
+user_msg = "The elements of the list: "
+enter = "Enter elements of the list:\n"
+user_msg1 = "Enter the size of the list: "
+sum_msg = "\nSum is: %d\n"
+kfinder = "Enter the key: "
+keyFound_msg = "Key %d is found at location "
+location_msg = " %d in the list\n"
+notFoundFormat = "Key %d is not found in the list\n"
+occur_format = "Key occurs %d times in the list\n"
+av_format = "Average is: %lf\n"
+list= (byte) 1024
+index = 0   
+count = 0
+key = 0
+loop = 1
+
+ _start():
+    print(user_msg1)
+
+    #take input the size
+    index = user input
+    #ask the user to enter the numbers
+    print(enter)
+    while(i < index*8) 
+    list[i] = input from user
+    i +=8
+    # Print the message indicating the elements of the list
+    print(user_msg)
+
+    # Print each element of the array
+    for every element1 in array:
+        print(n_format + element)
+
+    # Calculate the sum of elements in the array
+    for every element1 in array:
+    sumRegister += element1
+
+    # Print the sum
+    print(sum_msg + sumRegister)
+
+    # Calculate the average of elements in the array
+    total_elements = len(array)
+    if sumRegister != 0:
+        averageRegister = sumRegister / total_elements
+
+    # Print the average
+    print(av_format + averageRegister)
+    print(kfinder)
+    key = input from user
+    # Search for the key in the array
+    
+    for every element1 in the list:
+        if element1 == key:
+            # If the key is found, print its location
+            print(keyFound_msg + key)
+            print(location_msg indexRegister)
+            countRegister += 1
+	indexRegister += 1
+
+    # If the key is not found, print a message
+    if countRegister == 0:
+        print(notFoundFormat + key)
+
+    # If the key is found, print the occurrence count
+    else:
+        print(occur_format + countRegister)
+exit

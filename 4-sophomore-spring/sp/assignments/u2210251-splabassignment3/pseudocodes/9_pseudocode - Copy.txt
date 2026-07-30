@@ -1,0 +1,56 @@
+Declare format as "%s\n"
+Declare format2 as "%ld\n"
+Declare buffer1 with empty 12 bytes
+Declare message as "input, please"
+
+Function _start():
+    Print message asking for input
+    
+    Read input into buffer1
+    
+    Convert buffer1 to a number:
+        
+        For each character1 in buffer1:
+            If character is newline:
+		stop the loop
+            
+            If character is '-':
+		give 1 to register1    #register1 is some arbitrary register
+                Skip to the next character
+            
+            If character is '+':
+		give 0 to register1
+                Skip to the next character
+                
+            Subtract 48 from the ASCII value of character1 and save to resultRegister
+	    multiply exponentRegister by 10 
+            add resultRegister * exponentRegister to sumRegister 
+	#resetting registers
+	sumRegister = 0 
+	restultRegister = 0
+	For each character1 in buffer1:
+            If character is newline:
+		stop the loop
+            
+            If character is '-':
+		give 1 to register1
+                Skip to the next character
+            
+            If character is '+':
+		give 0 to register1
+                Skip to the next character
+                
+            Subtract 48 from the ASCII value of character1 and save to result1
+	    divide exponentRegister by 10
+            sum1 += result1 * exponentRegister        
+
+        If buffer1 starts with '-':
+            Make result negative
+        
+        Print the result using format2
+    
+    Exit the program
+
+Function printE():
+    Print the result using format2
+    Exit the program

@@ -1,0 +1,2 @@
+/home/javohir/hw3/2/question2.o
+

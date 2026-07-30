@@ -1,0 +1,58 @@
+Include header files
+
+function main(arguments, inputArgs):
+    declare variables:
+        fA, fB, fC
+        i, j, n, nxn
+        startTime, endTime
+
+    if arguments == 5 then
+        open fA = fopen(inputArgs[1], "r")
+        open fB = fopen(inputArgs[2], "r")
+        
+        n = atoi(inputArgs[4])
+        nxn = n * n
+
+        allocate memory for matrices A, B, C, and BTranspose
+
+        read matrices A and B from files fA and fB, respectively
+
+        open fC = fopen(inputArgs[3], "w")
+        write transposed matrix B to file fC
+
+        transpose matrix B and store it in BTranspose
+
+        record startTime
+
+        perform matrix multiplication using matrices A and BTranspose, storing the result in matrix C
+
+        record endTime
+
+        write matrix C to file fC
+
+        calculate and record CPU time taken for matrix multiplication
+
+        free memory allocated for matrix C
+
+        close files fA, fB, and fC
+    else
+        print error message about incorrect format
+
+function passCPUTime(startTime, endTime, method, n):
+    open file fileTiming = fopen("CPU_time", "a")
+    calculate total_t as (endTime - startTime) / CLOCKS_PER_SEC
+    print total_t and method to console
+    write total_t, method, and matrix dimensions to file fileTiming
+    close file fileTiming
+
+function matTranspose(B, n):
+    for each element B[i][j] in B do
+        swap B[i][j] with B[j][i]
+
+function mmult(A, B, C, n):
+    for each row i in A do
+        for each column j in B do
+            sum = 0
+            for each column k in A or B do
+                sum += A[i][k] * B[j][k]
+            C[i][j] = sum

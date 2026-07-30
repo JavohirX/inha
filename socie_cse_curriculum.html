@@ -1,0 +1,1232 @@
+<div id="curr-map">
+<style>
+.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+
+#curr-map{
+  color-scheme:light;
+
+  /* Palette: black, white, and six accents only */
+  --black:#000000;
+  --white:#ffffff;
+  --teal:#00A8A8;
+  --blue:#2563EB;
+  --purple:#7C3AED;
+  --green:#16A34A;
+  --orange:#D95F02;
+  --red:#D13C4A;
+
+  --b-bg:color-mix(in srgb,var(--blue) 14%,var(--white));--b-tx:var(--blue);--b-dot:var(--blue);
+  --p-bg:color-mix(in srgb,var(--purple) 14%,var(--white));--p-tx:var(--purple);--p-dot:var(--purple);
+  --g-bg:color-mix(in srgb,var(--green) 14%,var(--white));--g-tx:var(--green);--g-dot:var(--green);
+  --t-bg:color-mix(in srgb,var(--teal) 14%,var(--white));--t-tx:var(--teal);--t-dot:var(--teal);
+  --c-bg:color-mix(in srgb,var(--orange) 14%,var(--white));--c-tx:var(--orange);--c-dot:var(--orange);
+  --a-bg:color-mix(in srgb,var(--red) 14%,var(--white));--a-tx:var(--red);--a-dot:var(--red);
+  --gy-bg:color-mix(in srgb,var(--black) 6%,var(--white));--gy-tx:var(--black);--gy-dot:var(--black);
+
+  --ink:var(--black);
+  --ink-2:color-mix(in srgb,var(--black) 72%,var(--white));
+  --ink-3:color-mix(in srgb,var(--black) 48%,var(--white));
+  --line:var(--black);
+  --line-soft:color-mix(in srgb,var(--black) 22%,var(--white));
+  --snow:color-mix(in srgb,var(--black) 4%,var(--white));
+  --surface:var(--white);
+  --danger:var(--red);
+  --danger-soft:color-mix(in srgb,var(--red) 12%,var(--white));
+  --radius:0;
+  --shadow:3px 3px 0 var(--black);
+  --shadow-lg:4px 4px 0 var(--black);
+
+  background:var(--surface);
+  color:var(--ink);
+  font-family:"Segoe UI",system-ui,-apple-system,Roboto,"Helvetica Neue",Arial,sans-serif;
+  font-size:15px;
+  line-height:1.5;
+  font-weight:400;
+  -webkit-font-smoothing:antialiased;
+}
+
+#curr-map *,#curr-map *::before,#curr-map *::after{box-sizing:border-box}
+#curr-map button{font:inherit;color:inherit}
+
+/* —— Header —— */
+#curr-map .map-header{
+  margin-bottom:20px;
+  padding-bottom:16px;
+  border-bottom:2px solid var(--ink);
+}
+#curr-map .map-title{
+  margin:0;
+  font-size:22px;
+  font-weight:700;
+  letter-spacing:-0.02em;
+  color:var(--ink);
+  line-height:1.2;
+}
+#curr-map .map-subtitle{
+  margin:6px 0 0;
+  font-size:14px;
+  font-weight:500;
+  color:var(--ink-3);
+}
+
+/* —— Toolbar —— */
+#curr-map .toolbar{
+  display:flex;
+  flex-wrap:wrap;
+  align-items:flex-end;
+  justify-content:space-between;
+  gap:18px 28px;
+  margin-bottom:22px;
+  padding:18px 20px;
+  background:var(--white);
+  border:2px solid var(--ink);
+  border-radius:0;
+  box-shadow:var(--shadow);
+}
+#curr-map .stats{
+  display:flex;
+  flex-wrap:wrap;
+  gap:24px 36px;
+}
+#curr-map .stat{min-width:0}
+#curr-map .stat-label{
+  font-size:12px;
+  font-weight:600;
+  letter-spacing:0.06em;
+  text-transform:uppercase;
+  color:var(--ink-3);
+}
+#curr-map .stat-row{
+  display:flex;
+  align-items:baseline;
+  gap:8px;
+  margin-top:6px;
+}
+#curr-map .stat-value{
+  font-size:30px;
+  font-weight:700;
+  letter-spacing:-0.04em;
+  font-variant-numeric:tabular-nums;
+  color:var(--ink);
+  line-height:1;
+}
+#curr-map .stat-sub{
+  font-size:13px;
+  font-weight:500;
+  color:var(--ink-3);
+  font-variant-numeric:tabular-nums;
+}
+#curr-map .toggle-label{
+  display:inline-flex;
+  align-items:center;
+  gap:10px;
+  font-size:14px;
+  font-weight:600;
+  color:var(--ink-2);
+  cursor:pointer;
+  user-select:none;
+  white-space:nowrap;
+  padding:8px 0;
+}
+#curr-map .toggle-label input{
+  width:17px;height:17px;
+  accent-color:var(--blue);
+  cursor:pointer;
+  margin:0;
+}
+#curr-map .toolbar-actions{
+  display:flex;
+  flex-wrap:wrap;
+  align-items:center;
+  gap:14px 18px;
+}
+#curr-map .reset-btn{
+  padding:8px 14px;
+  border:2px solid var(--ink);
+  background:var(--white);
+  color:var(--ink);
+  font-size:13px;
+  font-weight:600;
+  cursor:pointer;
+  box-shadow:2px 2px 0 var(--black);
+  transition:background .12s ease, color .12s ease;
+}
+#curr-map .reset-btn:hover{
+  background:var(--ink);
+  color:var(--white);
+}
+
+/* —— Category filters —— */
+#curr-map .filters{
+  display:flex;
+  flex-wrap:wrap;
+  gap:10px;
+  margin-bottom:24px;
+}
+#curr-map .chip{
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+  padding:8px 14px 8px 12px;
+  border-radius:0;
+  border:2px solid var(--line);
+  background:var(--white);
+  cursor:pointer;
+  font-size:13.5px;
+  font-weight:600;
+  color:var(--ink-2);
+  transition:opacity .15s ease, background .15s ease, color .15s ease, border-color .15s ease, box-shadow .15s ease;
+}
+#curr-map .chip:hover{
+  color:var(--ink);
+  border-color:var(--ink);
+  box-shadow:2px 2px 0 var(--black);
+}
+#curr-map .chip[data-active="true"]{
+  background:var(--chip-bg, var(--snow));
+  color:var(--chip-tx, var(--ink));
+  border-color:var(--chip-tx, var(--ink));
+  font-weight:600;
+  box-shadow:2px 2px 0 var(--black);
+}
+#curr-map .chip[data-active="false"]{
+  opacity:0.45;
+  background:var(--white);
+  border-color:var(--line-soft);
+  color:var(--ink-3);
+  font-weight:500;
+}
+#curr-map .chip-dot{
+  width:9px;height:9px;border-radius:0;flex:0 0 auto;
+}
+#curr-map .chip-count{
+  font-weight:600;
+  font-variant-numeric:tabular-nums;
+  opacity:0.7;
+  font-size:12px;
+}
+
+/* —— Year / semester board —— */
+#curr-map .board{
+  display:grid;
+  grid-template-columns:repeat(4, minmax(240px, 1fr));
+  gap:16px;
+  overflow-x:auto;
+  padding-bottom:4px;
+}
+@media (max-width:1100px){
+  #curr-map .board{grid-template-columns:repeat(2, minmax(260px, 1fr))}
+}
+@media (max-width:620px){
+  #curr-map .board{grid-template-columns:1fr}
+}
+
+#curr-map .year{
+  background:var(--white);
+  border:2px solid var(--ink);
+  border-radius:0;
+  padding:14px;
+  min-width:0;
+  box-shadow:var(--shadow);
+}
+#curr-map .year-label{
+  font-size:13px;
+  font-weight:700;
+  letter-spacing:0.08em;
+  text-transform:uppercase;
+  color:var(--ink);
+  padding:4px 6px 12px;
+}
+
+#curr-map .sems{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:10px;
+  align-items:start;
+}
+#curr-map .sem{
+  background:var(--white);
+  border:2px solid var(--line);
+  border-radius:0;
+  min-width:0;
+  display:flex;
+  flex-direction:column;
+  min-height:100%;
+}
+#curr-map .sem-head{
+  display:flex;
+  align-items:baseline;
+  justify-content:space-between;
+  gap:8px;
+  padding:12px 13px 10px;
+  border-bottom:2px solid var(--line);
+  background:var(--snow);
+  border-radius:0;
+}
+#curr-map .sem-title{
+  font-size:14px;
+  font-weight:600;
+  color:var(--ink);
+}
+#curr-map .sem-cr{
+  font-size:12px;
+  font-weight:600;
+  color:var(--ink-3);
+  font-variant-numeric:tabular-nums;
+  white-space:nowrap;
+}
+#curr-map .sem-body{
+  padding:10px;
+  display:flex;
+  flex-direction:column;
+  gap:8px;
+  flex:1;
+  background:var(--white);
+  min-height:48px;
+  transition:background .12s ease;
+  overflow-anchor:none;
+  position:relative;
+}
+#curr-map .sem-body.sem-drag-active{
+  background:color-mix(in srgb,var(--blue) 5%,var(--white));
+}
+#curr-map .pool-body.drag-over,
+#curr-map .trash-zone.drag-over{
+  outline:2px dashed var(--blue);
+  outline-offset:-2px;
+  background:color-mix(in srgb,var(--blue) 8%,var(--white));
+}
+#curr-map .drop-placeholder{
+  flex:0 0 auto;
+  border:2px dashed var(--blue);
+  background:color-mix(in srgb,var(--blue) 8%,var(--white));
+  box-sizing:border-box;
+  pointer-events:none;
+  transition:height .15s ease;
+}
+#curr-map .sem-empty{
+  font-size:13px;
+  font-weight:500;
+  color:var(--ink-3);
+  padding:12px 8px;
+  text-align:center;
+}
+
+/* —— Course cards —— */
+#curr-map .course{
+  display:flex;
+  gap:0;
+  border-radius:0;
+  background:var(--snow);
+  border:1px solid var(--line);
+  overflow:hidden;
+  position:relative;
+  cursor:grab;
+  user-select:none;
+  -webkit-user-select:none;
+  touch-action:none;
+  transition:border-color .12s ease, background .12s ease, box-shadow .12s ease;
+}
+#curr-map .course.is-flipping{
+  transition:transform .45s cubic-bezier(.2,.8,.2,1);
+  z-index:5;
+}
+#curr-map .course.snap-out{
+  --snap-rot:0deg;
+  animation:curr-snap-out .55s ease-in forwards;
+  pointer-events:none;
+}
+@keyframes curr-snap-out{
+  0%{opacity:1;transform:scale(1) rotate(0deg);filter:blur(0)}
+  35%{opacity:.85;transform:scale(1.03) rotate(var(--snap-rot));filter:blur(0)}
+  100%{opacity:0;transform:scale(.15) translateY(-28px) rotate(calc(var(--snap-rot) * 2));filter:blur(8px)}
+}
+#curr-map .course.pop-in{
+  animation:curr-pop-in .22s ease-out both;
+}
+@keyframes curr-pop-in{
+  from{opacity:0;transform:translateY(10px)}
+  to{opacity:1;transform:translateY(0)}
+}
+#curr-map .course:hover{
+  border-color:var(--ink);
+  background:var(--white);
+  box-shadow:2px 2px 0 var(--black);
+}
+#curr-map .course.is-dragging{
+  opacity:.4;
+  cursor:grabbing;
+}
+#curr-map .course.is-dragging-out{
+  position:absolute;
+  left:-9999px;
+  width:1px;
+  height:1px;
+  overflow:hidden;
+  opacity:0;
+  pointer-events:none;
+}
+#curr-map .course-drag-ghost{
+  display:flex !important;
+  gap:0;
+  position:fixed !important;
+  left:-9999px;
+  top:0;
+  z-index:9999;
+  opacity:1 !important;
+  pointer-events:none;
+  background:var(--white) !important;
+  border:2px solid var(--ink) !important;
+  box-shadow:var(--shadow) !important;
+  max-height:none !important;
+  min-height:0;
+  overflow:visible !important;
+  transform:none !important;
+  animation:none !important;
+  filter:none !important;
+}
+#curr-map .course:active{cursor:grabbing}
+#curr-map .course-accent{
+  width:5px;
+  flex:0 0 5px;
+  background:var(--cat-dot);
+}
+#curr-map .course-body{
+  flex:1;
+  min-width:0;
+  padding:9px 10px 9px 11px;
+}
+#curr-map .course-top{
+  display:flex;
+  align-items:flex-start;
+  gap:6px;
+}
+#curr-map .course-name{
+  flex:1;
+  min-width:0;
+  font-size:13.5px;
+  font-weight:600;
+  line-height:1.4;
+  color:var(--ink);
+}
+#curr-map .course.is-elective .course-name{
+  font-weight:500;
+  color:var(--ink-2);
+}
+#curr-map .course-meta{
+  display:flex;
+  flex-wrap:wrap;
+  align-items:center;
+  gap:4px 7px;
+  margin-top:4px;
+  font-size:11.5px;
+  font-weight:500;
+  color:var(--ink-3);
+  font-variant-numeric:tabular-nums;
+  line-height:1.35;
+}
+#curr-map .course-meta .sep{opacity:0.45}
+#curr-map .badge-fx{
+  display:inline-flex;
+  align-items:center;
+  gap:2px;
+  font-size:11px;
+  font-weight:600;
+  color:var(--ink-3);
+}
+#curr-map .course-note{
+  margin-top:4px;
+  font-size:11.5px;
+  font-weight:500;
+  color:var(--ink-3);
+  line-height:1.4;
+}
+
+/* —— Trash drop zone —— */
+#curr-map .trash-zone{
+  display:none;
+  position:fixed;
+  bottom:28px;
+  left:50%;
+  transform:translateX(-50%);
+  z-index:200;
+  align-items:center;
+  gap:12px;
+  padding:14px 28px;
+  background:var(--white);
+  border:2px solid var(--red);
+  box-shadow:var(--shadow-lg);
+  pointer-events:none;
+  transition:background .12s ease, border-color .12s ease;
+}
+#curr-map.is-dragging .trash-zone{
+  display:flex;
+  pointer-events:auto;
+}
+#curr-map .trash-zone.drag-over{
+  background:var(--danger-soft);
+  border-color:var(--red);
+  outline:2px dashed var(--red);
+  outline-offset:2px;
+}
+#curr-map .trash-icon{
+  font-size:22px;
+  font-weight:700;
+  line-height:1;
+  color:var(--red);
+}
+#curr-map .trash-label{
+  font-size:14px;
+  font-weight:600;
+  color:var(--ink);
+  white-space:nowrap;
+}
+
+/* —— Unassigned pool —— */
+#curr-map .pool{
+  margin-top:20px;
+  border:2px solid var(--ink);
+  border-radius:0;
+  background:var(--white);
+  display:none;
+  box-shadow:var(--shadow);
+}
+#curr-map .pool.has-items{display:block}
+#curr-map.is-dragging .pool{display:block}
+#curr-map .pool-head{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+  padding:14px 16px;
+  border-bottom:2px solid var(--line);
+  background:var(--snow);
+  border-radius:0;
+}
+#curr-map .pool-title{
+  font-size:14px;
+  font-weight:600;
+  color:var(--ink);
+}
+#curr-map .pool-hint{
+  font-size:13px;
+  font-weight:500;
+  color:var(--ink-3);
+}
+#curr-map .pool-body{
+  padding:14px 16px 16px;
+  display:flex;
+  flex-wrap:wrap;
+  gap:10px;
+  background:var(--white);
+  min-height:56px;
+  position:relative;
+}
+#curr-map .pool-body .course{
+  flex:1 1 220px;
+  max-width:320px;
+}
+#curr-map .pool-empty{
+  width:100%;
+  font-size:13px;
+  font-weight:500;
+  color:var(--ink-3);
+  text-align:center;
+  padding:8px 0;
+}
+
+/* —— Footnote —— */
+#curr-map .footnote{
+  margin:18px 0 0;
+  font-size:13px;
+  font-weight:500;
+  color:var(--ink-3);
+  line-height:1.6;
+}
+#curr-map .footnote kbd{
+  font:inherit;
+  font-weight:600;
+  color:var(--ink-2);
+  padding:1px 5px;
+  border:1px solid var(--line);
+  border-radius:0;
+  background:var(--white);
+}
+</style>
+
+<header class="map-header">
+  <h2 class="map-title">CSE Curriculum Roadmap</h2>
+  <p class="map-subtitle">Computer Science and Engineering program</p>
+</header>
+
+<div class="toolbar">
+  <div class="stats">
+    <div class="stat">
+      <div class="stat-label">Shown</div>
+      <div class="stat-row">
+        <span class="stat-value" id="stat-shown">0</span>
+        <span class="stat-sub" id="stat-shown-sub">0 courses</span>
+      </div>
+    </div>
+    <div class="stat">
+      <div class="stat-label">Mandatory</div>
+      <div class="stat-row">
+        <span class="stat-value" id="stat-mandatory">0</span>
+        <span class="stat-sub" id="stat-mandatory-sub">0 courses</span>
+      </div>
+    </div>
+    <div class="stat">
+      <div class="stat-label">Electives</div>
+      <div class="stat-row">
+        <span class="stat-value" id="stat-elective">0</span>
+        <span class="stat-sub" id="stat-elective-sub">0 courses</span>
+      </div>
+    </div>
+    <div class="stat">
+      <div class="stat-label">Elective min.</div>
+      <div class="stat-row">
+        <span class="stat-value">54</span>
+        <span class="stat-sub">credits</span>
+      </div>
+    </div>
+  </div>
+  <div class="toolbar-actions">
+    <button type="button" class="reset-btn" onclick="window.__currMap.reset()">Reset layout</button>
+    <label class="toggle-label">
+      <input type="checkbox" id="mandatory-toggle" onchange="window.__currMap.toggleMandatory(this)">
+      Mandatory only
+    </label>
+  </div>
+</div>
+
+<div class="filters" id="chips"></div>
+
+<div class="board" id="grid"></div>
+
+<div class="pool" id="pool">
+  <div class="pool-head">
+    <div class="pool-title">Unassigned</div>
+    <div class="pool-hint" id="pool-count">Drag subjects onto a semester to assign them</div>
+  </div>
+  <div class="pool-body drop-zone" id="pool-body" data-drop="pool"></div>
+</div>
+
+<div class="trash-zone drop-zone" id="trash" data-drop="trash" aria-hidden="true">
+  <span class="trash-icon" aria-hidden="true">&#128465;</span>
+  <span class="trash-label">Drop here to unassign</span>
+</div>
+
+<p class="footnote">
+  Flexible-timing courses may move between semesters by cohort.
+  Drag a subject to a precise row in any semester (cards shift to show the slot), reorder within a column, or drop on the trash to unassign.
+</p>
+</div>
+
+<script>
+(function(){
+var CATS={
+  general:{label:"General education",p:"b"},
+  nontech:{label:"Non-technical",p:"p"},
+  math:{label:"Math",p:"g"},
+  science:{label:"Science",p:"t"},
+  sw:{label:"Software fundamentals",p:"c"},
+  core:{label:"Technical core",p:"a"},
+  elective:{label:"Technical electives",p:"gy"}
+};
+var CATORDER=["general","nontech","math","science","sw","core","elective"];
+var YEARS=[1,2,3,4];
+var SEMS=[["F","Fall"],["S","Spring"]];
+
+var COURSES=[
+  {n:"Academic English 1",id:"GEN1021",cr:2,m:true,cat:"general",y:1,s:"F"},
+  {n:"Academic English 2",id:"GEN1022",cr:2,m:true,cat:"general",y:1,s:"S"},
+  {n:"Academic English Reading",id:"GEN1020",cr:2,m:true,cat:"general",y:1,s:"F"},
+  {n:"Technical Writing and Discussion",id:"GEN1030",cr:2,m:true,cat:"general",y:1,s:"S"},
+  {n:"Academic English 3",id:"GEN2021",cr:2,m:false,cat:"general",y:2,s:"F"},
+  {n:"Academic English 4",id:"GEN2022",cr:2,m:false,cat:"general",y:2,s:"S"},
+  {n:"Basic Korean 1",id:"GEN2033",cr:2,m:false,cat:"general",y:2,s:"F"},
+  {n:"Basic Korean 2",id:"GEN2034",cr:2,m:false,cat:"general",y:2,s:"S"},
+  {n:"Introduction to Business Administration",id:"NTS3010",cr:3,m:true,cat:"nontech",y:3,s:"S"},
+  {n:"Introduction to Economics",id:"NTS3040",cr:3,m:true,cat:"nontech",y:3,s:"F"},
+  {n:"Engineering Communications",id:"NTS3020",cr:3,m:true,cat:"nontech",y:3,s:"F"},
+  {n:"Engineering Ethics",id:"NTS4010",cr:2,m:true,cat:"nontech",y:4,s:"S"},
+  {n:"Distinguished Lecture in Social Science and Art",id:"NTS4060",cr:2,m:false,cat:"nontech",y:4,s:"F"},
+
+  {n:"History of Uzbekistan, Philosophy and Jurisprudence 1",id:"NTS3031",cr:1,m:true,cat:"nontech",y:2,s:"S"},
+  {n:"History of Uzbekistan, Philosophy and Jurisprudence 2",id:"NTS3032",cr:1,m:true,cat:"nontech",y:3,s:"F"},
+
+  {n:"Calculus 1",id:"MSC1011",cr:3,m:true,cat:"math",y:1,s:"F",note:"Also offered in spring"},
+  {n:"Calculus 2",id:"MSC1012",cr:3,m:true,cat:"math",y:1,s:"S"},
+  {n:"Engineering Mathematics",id:"MSC2010",cr:3,m:true,cat:"math",y:2,s:"F"},
+  {n:"Linear Algebra",id:"MSC2020",cr:3,m:true,cat:"math",y:2,s:"F"},
+  {n:"Discrete Mathematics",id:"MSC2050",cr:3,m:true,cat:"math",y:2,s:"S"},
+  {n:"Probability and Statistics",id:"MSC3010",cr:3,m:true,cat:"math",y:3,s:"S"},
+
+  {n:"Physics 1",id:"MSC1021",cr:3,m:true,cat:"science",y:1,s:"F",note:"Also offered in spring"},
+  {n:"Physics 2",id:"MSC1022",cr:3,m:true,cat:"science",y:1,s:"S"},
+  {n:"Physics Experiment 1",id:"MSC1031",cr:1,m:true,cat:"science",y:1,s:"F"},
+  {n:"Physics Experiment 2",id:"MSC1032",cr:1,m:true,cat:"science",y:1,s:"S"},
+  {n:"Object-Oriented Programming 1",id:"MSC1051",cr:3,m:true,cat:"sw",y:1,s:"F"},
+  {n:"Object-Oriented Programming 2",id:"MSC1052",cr:3,m:true,cat:"sw",y:1,s:"S"},
+  {n:"Application Programming in Java",id:"MSC2070",cr:3,m:true,cat:"sw",y:2,s:"F"},
+  {n:"Introduction to IT",id:"CSE1010",cr:3,m:true,cat:"core",y:1,s:"F"},
+  {n:"Creative Engineering Design",id:"CSE1020",cr:3,m:true,cat:"core",y:1,s:"S"},
+  {n:"Data Structure",id:"CSE2010",cr:3,m:true,cat:"core",y:2,s:"F"},
+  {n:"Digital Logic Circuit",id:"SOC2020",cr:3,m:true,cat:"core",y:2,s:"S"},
+  {n:"System Programming",id:"SOC2040",cr:3,m:true,cat:"core",y:2,s:"S"},
+  {n:"Computer Algorithm",id:"SOC3030",cr:3,m:true,cat:"core",y:3,s:"F"},
+  {n:"Operating System",id:"SOC3010",cr:3,m:true,cat:"core",y:3,s:"F"},
+  {n:"Database",id:"SOC3020",cr:3,m:true,cat:"core",y:3,s:"F"},
+  {n:"Computer Networks",id:"SOC3040",cr:3,m:true,cat:"core",y:3,s:"S"},
+  {n:"Capstone Design",id:"CSE4020",cr:3,m:true,cat:"core",y:4,s:"S"},
+  {n:"Circuit and Lab",id:"CSE2120",cr:3,m:false,cat:"elective",y:2,s:"F"},
+  {n:"Computer Architecture",id:"SOC2060",cr:3,m:false,cat:"elective",y:2,s:"S"},
+  {n:"Embedded Software and Design",id:"SOC3050",cr:3,m:false,cat:"elective",y:4,s:"F",fx:true},
+  {n:"Signals and Systems",id:"CSE2090",cr:3,m:false,cat:"elective",y:3,s:"S"},
+  {n:"Database Application and Design",id:"SOC3060",cr:3,m:false,cat:"elective",y:3,s:"S"},
+  {n:"System Analysis",id:"SOC3070",cr:3,m:false,cat:"elective",y:3,s:"F"},
+  {n:"Unix Programming",id:"CSE3070",cr:3,m:false,cat:"elective",y:3,s:"S"},
+  {n:"Computer Security",id:"SOC4010",cr:3,m:false,cat:"elective",y:4,s:"S",fx:true},
+  {n:"Multimedia Computing",id:"SOC4020",cr:3,m:false,cat:"elective",y:4,s:"S",fx:true},
+  {n:"Mobile Programming",id:"SOC4030",cr:3,m:false,cat:"elective",y:4,s:"S"},
+  {n:"Artificial Intelligence",id:"SOC4040",cr:3,m:false,cat:"elective",y:4,s:"F"},
+  {n:"Software Engineering",id:"CSE4070",cr:3,m:false,cat:"elective",y:4,s:"F",fx:true},
+  {n:"Multimedia Application",id:"SOC4080",cr:3,m:false,cat:"elective",y:4,s:"F"},
+  {n:"Internet of Things",id:"SOC4110",cr:3,m:false,cat:"elective",y:4,s:"S",fx:true},
+  {n:"Big Data Analytics",id:"SOC4170",cr:3,m:false,cat:"elective",y:4,s:"F",fx:true}
+];
+
+function byOrd(a,b){
+  var ao=a.ord!=null?a.ord:9999;
+  var bo=b.ord!=null?b.ord:9999;
+  if(ao!==bo)return ao-bo;
+  return CATORDER.indexOf(a.cat)-CATORDER.indexOf(b.cat);
+}
+
+function assignDefaultOrders(courses){
+  YEARS.forEach(function(y){
+    SEMS.forEach(function(pair){
+      var s=pair[0];
+      var list=courses.filter(function(c){return c.y===y&&c.s===s;})
+        .sort(function(a,b){return CATORDER.indexOf(a.cat)-CATORDER.indexOf(b.cat);});
+      list.forEach(function(c,i){c.ord=i;});
+    });
+  });
+  courses.filter(function(c){return c.y==null||c.s==null;})
+    .sort(function(a,b){
+      var ca=CATORDER.indexOf(a.cat)-CATORDER.indexOf(b.cat);
+      return ca!==0?ca:a.n.localeCompare(b.n);
+    })
+    .forEach(function(c,i){c.ord=i;});
+}
+
+assignDefaultOrders(COURSES);
+var DEFAULT_COURSES=JSON.parse(JSON.stringify(COURSES));
+
+var activeCats=new Set(CATORDER);
+var mandatoryOnly=false;
+var dragId=null;
+var dropPreview={zone:null,index:-1,key:null};
+var dragSlotH=64;
+var dragGhost=null;
+var previewRAF=null;
+var lastVisibleIds=new Set();
+var didInitialRender=false;
+var filterAnimGen=0;
+
+function esc(s){
+  return String(s)
+    .replace(/&/g,"&amp;")
+    .replace(/</g,"&lt;")
+    .replace(/>/g,"&gt;")
+    .replace(/"/g,"&quot;");
+}
+
+function isAssigned(c){return c.y!=null&&c.s!=null}
+
+function passes(c){
+  if(!activeCats.has(c.cat))return false;
+  if(mandatoryOnly&&!c.m)return false;
+  return true;
+}
+
+function unassigned(){
+  return COURSES.filter(function(c){return !isAssigned(c)&&passes(c);}).sort(byOrd);
+}
+
+function getSemCourses(y,s,visibleOnly){
+  return COURSES.filter(function(c){
+    if(!isAssigned(c)||c.y!==y||c.s!==s)return false;
+    return visibleOnly?passes(c):true;
+  }).sort(byOrd);
+}
+
+function getOrderedSemIds(y,s,excludeId){
+  return getSemCourses(y,s,false)
+    .filter(function(c){return c.id!==excludeId;})
+    .map(function(c){return c.id;});
+}
+
+function getPoolIds(excludeId){
+  return COURSES.filter(function(c){
+    return !isAssigned(c)&&c.id!==excludeId;
+  }).sort(byOrd).map(function(c){return c.id;});
+}
+
+function applySemOrder(y,s,ids){
+  ids.forEach(function(id,i){
+    var c=COURSES.find(function(x){return x.id===id;});
+    if(c){c.y=y;c.s=s;c.ord=i;}
+  });
+}
+
+function captureRects(){
+  var rects={};
+  document.querySelectorAll("#curr-map .course").forEach(function(el){
+    rects[el.dataset.id]=el.getBoundingClientRect();
+  });
+  return rects;
+}
+
+function flipAnimate(firstRects){
+  requestAnimationFrame(function(){
+    Object.keys(firstRects).forEach(function(id){
+      var el=document.querySelector('#curr-map .course[data-id="'+id+'"]');
+      if(!el)return;
+      var first=firstRects[id];
+      var last=el.getBoundingClientRect();
+      var dx=first.left-last.left;
+      var dy=first.top-last.top;
+      if(Math.abs(dx)<1&&Math.abs(dy)<1)return;
+      el.classList.add("is-flipping");
+      el.style.transition="none";
+      el.style.transform="translate("+dx+"px,"+dy+"px)";
+      requestAnimationFrame(function(){
+        el.style.transition="";
+        el.style.transform="";
+        function done(){
+          el.classList.remove("is-flipping");
+          el.style.transition="";
+          el.removeEventListener("transitionend",done);
+        }
+        el.addEventListener("transitionend",done);
+      });
+    });
+  });
+}
+
+function buildChips(){
+  var wrap=document.getElementById("chips");
+  wrap.innerHTML=CATORDER.map(function(cat){
+    var c=CATS[cat];
+    return '<button type="button" class="chip" id="chip-'+cat+'" data-active="true" '
+      +'style="--chip-bg:var(--'+c.p+'-bg);--chip-tx:var(--'+c.p+'-tx)" '
+      +'onclick="window.__currMap.toggleCat(\''+cat+'\')">'
+      +'<span class="chip-dot" style="background:var(--'+c.p+'-dot)"></span>'
+      +esc(c.label)
+      +'<span class="chip-count" id="chip-count-'+cat+'"></span>'
+      +'</button>';
+  }).join("");
+}
+
+function buildGrid(){
+  var grid=document.getElementById("grid");
+  var html="";
+  YEARS.forEach(function(y){
+    html+='<section class="year">';
+    html+='<div class="year-label">Year '+y+'</div>';
+    html+='<div class="sems">';
+    SEMS.forEach(function(pair){
+      var s=pair[0], label=pair[1];
+      var key=y+s;
+      html+='<div class="sem" data-key="'+key+'">'
+        +'<div class="sem-head">'
+        +'<div class="sem-title">'+label+'</div>'
+        +'<div class="sem-cr" id="total-'+key+'"></div>'
+        +'</div>'
+        +'<div class="sem-body drop-zone" id="col-'+key+'" data-drop="sem" data-key="'+key+'"></div>'
+        +'</div>';
+    });
+    html+='</div></section>';
+  });
+  grid.innerHTML=html;
+}
+
+function courseRow(c){
+  var cc=CATS[c.cat];
+  var elect=c.m?"":" is-elective";
+  var fx=c.fx?'<span class="badge-fx" title="Timing may shift by cohort">flexible</span>':"";
+  var note=c.note?'<div class="course-note">'+esc(c.note)+'</div>':"";
+  return '<div class="course'+elect+'" draggable="true" data-id="'+esc(c.id)+'" style="--cat-dot:var(--'+cc.p+'-dot)">'
+    +'<div class="course-accent" aria-hidden="true"></div>'
+    +'<div class="course-body">'
+    +'<div class="course-top">'
+    +'<div class="course-name">'+esc(c.n)+'</div>'
+    +'</div>'
+    +'<div class="course-meta">'
+    +'<span>'+esc(c.id)+'</span><span class="sep">·</span><span>'+c.cr+' cr</span>'
+    +(fx?'<span class="sep">·</span>'+fx:"")
+    +'</div>'
+    +note
+    +'</div></div>';
+}
+
+function parseSemKey(key){
+  var m=String(key).match(/^(\d)([FS])$/);
+  return m?{y:+m[1],s:m[2]}:null;
+}
+
+function clearDropPreview(){
+  if(previewRAF){cancelAnimationFrame(previewRAF);previewRAF=null;}
+  document.querySelectorAll("#curr-map .drop-placeholder").forEach(function(el){el.remove();});
+  document.querySelectorAll("#curr-map .sem-body").forEach(function(el){
+    el.classList.remove("sem-drag-active");
+  });
+  dropPreview={zone:null,index:-1,key:null};
+}
+
+function endDragState(){
+  var root=document.getElementById("curr-map");
+  if(!root)return;
+  root.classList.remove("is-dragging");
+  root.querySelectorAll(".course.is-dragging, .course.is-dragging-out").forEach(function(el){
+    el.classList.remove("is-dragging");
+    el.classList.remove("is-dragging-out");
+  });
+  clearDragOver();
+  clearDropPreview();
+  dragId=null;
+  if(dragGhost&&dragGhost.parentNode)dragGhost.parentNode.removeChild(dragGhost);
+  dragGhost=null;
+  var trash=document.getElementById("trash");
+  if(trash)trash.setAttribute("aria-hidden","true");
+}
+
+function calcInsertIndex(zone,clientY){
+  var cards=Array.from(zone.querySelectorAll(".course:not(.is-dragging)"));
+  if(zone.querySelector(".sem-empty"))return 0;
+  for(var i=0;i<cards.length;i++){
+    var r=cards[i].getBoundingClientRect();
+    if(clientY<r.top+r.height/2)return i;
+  }
+  return cards.length;
+}
+
+function showSemDropPreview(zone,clientY){
+  var insertAt=calcInsertIndex(zone,clientY);
+  if(dropPreview.zone===zone&&dropPreview.index===insertAt){
+    var existing=zone.querySelector(".drop-placeholder");
+    if(existing)return;
+  }
+  var cards=Array.from(zone.querySelectorAll(".course:not(.is-dragging)"));
+  var placeholder=zone.querySelector(".drop-placeholder");
+  if(!placeholder){
+    document.querySelectorAll("#curr-map .drop-placeholder").forEach(function(el){el.remove();});
+    document.querySelectorAll("#curr-map .sem-body").forEach(function(el){
+      el.classList.remove("sem-drag-active");
+    });
+    zone.classList.add("sem-drag-active");
+    placeholder=document.createElement("div");
+    placeholder.className="drop-placeholder";
+    placeholder.style.height=dragSlotH+"px";
+  }
+  if(insertAt>=cards.length)zone.appendChild(placeholder);
+  else zone.insertBefore(placeholder,cards[insertAt]);
+  dropPreview={zone:zone,index:insertAt,key:zone.dataset.key};
+}
+
+function scheduleSemPreview(zone,clientY){
+  if(previewRAF)cancelAnimationFrame(previewRAF);
+  previewRAF=requestAnimationFrame(function(){
+    previewRAF=null;
+    showSemDropPreview(zone,clientY);
+  });
+}
+
+function moveCourse(id,y,s,insertIndex){
+  var c=COURSES.find(function(x){return x.id===id;});
+  if(!c)return;
+  var oldY=c.y, oldS=c.s;
+  if(y==null||s==null){
+    c.y=null;
+    c.s=null;
+    var poolIds=getPoolIds(id);
+    poolIds.push(id);
+    poolIds.forEach(function(pid,i){
+      var pc=COURSES.find(function(x){return x.id===pid;});
+      if(pc){pc.y=null;pc.s=null;pc.ord=i;}
+    });
+    if(isAssigned({y:oldY,s:oldS})&&oldY!=null){
+      applySemOrder(oldY,oldS,getOrderedSemIds(oldY,oldS,id));
+    }
+  }else{
+    if(insertIndex==null||insertIndex<0)insertIndex=getOrderedSemIds(y,s,id).length;
+    var targetIds=getOrderedSemIds(y,s,id);
+    insertIndex=Math.min(insertIndex,targetIds.length);
+    targetIds.splice(insertIndex,0,id);
+    applySemOrder(y,s,targetIds);
+    if(oldY===y&&oldS===s)return endDragState(),render();
+    if(isAssigned({y:oldY,s:oldS})&&oldY!=null&&(oldY!==y||oldS!==s)){
+      applySemOrder(oldY,oldS,getOrderedSemIds(oldY,oldS,id));
+    }
+  }
+  endDragState();
+  render();
+}
+
+function resetCourses(){
+  var firstRects=captureRects();
+  COURSES.length=0;
+  DEFAULT_COURSES.forEach(function(src){
+    COURSES.push(JSON.parse(JSON.stringify(src)));
+  });
+  activeCats=new Set(CATORDER);
+  mandatoryOnly=false;
+  var toggle=document.getElementById("mandatory-toggle");
+  if(toggle)toggle.checked=false;
+  endDragState();
+  render({flip:firstRects});
+}
+
+function renderPool(){
+  var pool=document.getElementById("pool");
+  var body=document.getElementById("pool-body");
+  var list=unassigned();
+  if(!list.length){
+    pool.classList.remove("has-items");
+    body.innerHTML='<div class="pool-empty">Drop here to unassign</div>';
+    document.getElementById("pool-count").textContent="Drag subjects here or onto a semester";
+    return;
+  }
+  pool.classList.add("has-items");
+  document.getElementById("pool-count").textContent=
+    list.length+(list.length===1?" subject":" subjects")+" · drag onto a semester";
+  body.innerHTML=list.map(courseRow).join("");
+}
+
+function updateStaticStats(){
+  var mand=COURSES.filter(function(c){return c.m;});
+  var elec=COURSES.filter(function(c){return !c.m;});
+  document.getElementById("stat-mandatory").textContent=mand.reduce(function(s,c){return s+c.cr;},0);
+  document.getElementById("stat-mandatory-sub").textContent=mand.length+(mand.length===1?" course":" courses");
+  document.getElementById("stat-elective").textContent=elec.reduce(function(s,c){return s+c.cr;},0);
+  document.getElementById("stat-elective-sub").textContent=elec.length+(elec.length===1?" course":" courses");
+}
+
+function render(opts){
+  opts=opts||{};
+  var assignedVisible=COURSES.filter(function(c){return isAssigned(c)&&passes(c);});
+  document.getElementById("stat-shown").textContent=assignedVisible.reduce(function(s,c){return s+c.cr;},0);
+  document.getElementById("stat-shown-sub").textContent=
+    "cr · "+assignedVisible.length+(assignedVisible.length===1?" course":" courses");
+
+  CATORDER.forEach(function(cat){
+    var chip=document.getElementById("chip-"+cat);
+    if(chip)chip.dataset.active=activeCats.has(cat)?"true":"false";
+    var inCat=COURSES.filter(function(c){return c.cat===cat&&isAssigned(c)&&(!mandatoryOnly||c.m);});
+    var el=document.getElementById("chip-count-"+cat);
+    if(el)el.textContent=inCat.reduce(function(s,c){return s+c.cr;},0)+"cr";
+  });
+
+  YEARS.forEach(function(y){
+    SEMS.forEach(function(pair){
+      var s=pair[0];
+      var key=y+s;
+      var list=getSemCourses(y,s,true);
+      var col=document.getElementById("col-"+key);
+      if(!list.length){
+        col.innerHTML='<div class="sem-empty">No courses</div>';
+      }else{
+        col.innerHTML=list.map(courseRow).join("");
+      }
+      var total=list.reduce(function(sum,c){return sum+c.cr;},0);
+      document.getElementById("total-"+key).textContent=total>0?total+" cr":"—";
+    });
+  });
+
+  renderPool();
+  var currentIds=new Set();
+  assignedVisible.forEach(function(c){currentIds.add(c.id);});
+  unassigned().forEach(function(c){currentIds.add(c.id);});
+  if(didInitialRender){
+    currentIds.forEach(function(id){
+      if(!lastVisibleIds.has(id)){
+        var el=document.querySelector('#curr-map .course[data-id="'+id+'"]');
+        if(el)el.classList.add("pop-in");
+      }
+    });
+  }
+  lastVisibleIds=currentIds;
+  didInitialRender=true;
+  if(opts.flip)flipAnimate(opts.flip);
+}
+
+function toggleCat(cat){
+  var wasOn=activeCats.has(cat);
+  if(wasOn)activeCats.delete(cat);else activeCats.add(cat);
+  if(wasOn)animateFilterChange(function(){render();});
+  else render();
+}
+
+function runSnapOut(elements,onDone){
+  filterAnimGen++;
+  var gen=filterAnimGen;
+  if(!elements.length){onDone();return;}
+  var done=0;
+  var total=elements.length;
+  function finish(){
+    if(gen!==filterAnimGen)return;
+    onDone();
+  }
+  elements.forEach(function(el){
+    el.classList.remove("pop-in");
+    el.style.setProperty("--snap-rot",(Math.random()*16-8)+"deg");
+    el.classList.remove("snap-out");
+    void el.offsetWidth;
+    el.classList.add("snap-out");
+    el.addEventListener("animationend",function onEnd(e){
+      if(e.animationName!=="curr-snap-out")return;
+      el.removeEventListener("animationend",onEnd);
+      done++;
+      if(done>=total)finish();
+    });
+  });
+  setTimeout(finish,600);
+}
+
+function animateMandatoryToggle(chk){
+  var next=!!chk.checked;
+  filterAnimGen++;
+  mandatoryOnly=next;
+  if(!next){render();return;}
+  var cards=document.querySelectorAll("#curr-map .sem-body .course, #curr-map .pool-body .course");
+  var hiding=[];
+  cards.forEach(function(el){
+    var c=COURSES.find(function(x){return x.id===el.dataset.id;});
+    if(c&&!c.m)hiding.push(el);
+  });
+  if(!hiding.length){render();return;}
+  runSnapOut(hiding,function(){render();});
+}
+
+function animateFilterChange(after){
+  var cards=document.querySelectorAll("#curr-map .sem-body .course, #curr-map .pool-body .course");
+  var hiding=[];
+  cards.forEach(function(el){
+    var c=COURSES.find(function(x){return x.id===el.dataset.id;});
+    if(!c||!passes(c))hiding.push(el);
+  });
+  runSnapOut(hiding,after);
+}
+
+function toggleMandatory(chk){
+  animateMandatoryToggle(chk);
+}
+
+function clearDragOver(){
+  var root=document.getElementById("curr-map");
+  if(!root)return;
+  root.querySelectorAll(".drag-over").forEach(function(el){el.classList.remove("drag-over");});
+}
+
+function setupDragDrop(){
+  var root=document.getElementById("curr-map");
+  if(!root||root.dataset.dndReady)return;
+  root.dataset.dndReady="1";
+
+  root.addEventListener("dragstart",function(e){
+    var card=e.target.closest(".course");
+    if(!card||!card.draggable)return;
+    dragId=card.dataset.id;
+    dragSlotH=Math.max(card.offsetHeight,48);
+    e.dataTransfer.effectAllowed="move";
+    e.dataTransfer.setData("text/plain",dragId);
+    if(e.dataTransfer.setDragImage){
+      if(dragGhost&&dragGhost.parentNode)dragGhost.parentNode.removeChild(dragGhost);
+      dragGhost=card.cloneNode(true);
+      dragGhost.classList.remove("is-dragging","is-dragging-out","pop-in","snap-out");
+      dragGhost.classList.add("course-drag-ghost");
+      dragGhost.removeAttribute("draggable");
+      dragGhost.style.width=card.offsetWidth+"px";
+      root.appendChild(dragGhost);
+      e.dataTransfer.setDragImage(dragGhost,card.offsetWidth/2,card.offsetHeight/2);
+    }
+    card.classList.add("is-dragging");
+    root.classList.add("is-dragging");
+    requestAnimationFrame(function(){
+      card.classList.add("is-dragging-out");
+    });
+    var trash=document.getElementById("trash");
+    if(trash)trash.setAttribute("aria-hidden","false");
+  });
+
+  root.addEventListener("dragend",function(){
+    endDragState();
+  });
+
+  document.addEventListener("dragend",function(){
+    endDragState();
+  });
+
+  root.addEventListener("dragover",function(e){
+    var semBody=e.target.closest(".sem-body.drop-zone");
+    if(semBody){
+      e.preventDefault();
+      e.dataTransfer.dropEffect="move";
+      scheduleSemPreview(semBody,e.clientY);
+      return;
+    }
+    var zone=e.target.closest(".drop-zone");
+    if(!zone)return;
+    e.preventDefault();
+    e.dataTransfer.dropEffect="move";
+    clearDropPreview();
+    zone.classList.add("drag-over");
+  });
+
+  root.addEventListener("dragleave",function(e){
+    var semBody=e.target.closest(".sem-body.drop-zone");
+    if(semBody&&!semBody.contains(e.relatedTarget)){
+      if(dropPreview.zone===semBody)clearDropPreview();
+      return;
+    }
+    var zone=e.target.closest(".drop-zone");
+    if(zone&&!zone.contains(e.relatedTarget))zone.classList.remove("drag-over");
+  });
+
+  root.addEventListener("drop",function(e){
+    var zone=e.target.closest(".drop-zone");
+    if(!zone)return;
+    e.preventDefault();
+    zone.classList.remove("drag-over");
+    var id=e.dataTransfer.getData("text/plain")||dragId;
+    if(!id)return;
+    var dropType=zone.dataset.drop;
+    if(dropType==="trash"||dropType==="pool"){
+      moveCourse(id,null,null);
+    }else if(dropType==="sem"){
+      var parsed=parseSemKey(zone.dataset.key);
+      if(!parsed)return;
+      var idx=dropPreview.zone===zone?dropPreview.index:getOrderedSemIds(parsed.y,parsed.s,id).length;
+      moveCourse(id,parsed.y,parsed.s,idx);
+    }
+  });
+
+  root.addEventListener("copy",function(e){
+    if(e.target.closest(".course"))e.preventDefault();
+  });
+}
+
+window.__currMap={
+  toggleCat:toggleCat,
+  toggleMandatory:toggleMandatory,
+  reset:resetCourses
+};
+
+buildChips();
+buildGrid();
+setupDragDrop();
+updateStaticStats();
+render();
+})();
+</script>

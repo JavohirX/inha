@@ -1,0 +1,40 @@
+Declare variables:
+    print: string = "Please enter a message: \n"
+    input: string = "%[^\n]s"
+    denied: array of characters (size 100)
+    original: string = "Entered message: %s\n"
+    denied_encripted: array of characters (size 100)
+    output_encripted: string = "Encrypted message: %s\n"
+
+_start:
+    // Push the base pointer onto the stack and allocate space for local variables
+    Push base pointer onto the stack
+    Subtract 8 from the stack pointer to allocate space for local variables
+
+    // Print "Please enter a message: \n"
+    Call printf with print string as argument
+
+    // Read input from the user
+    Call scanf with input string and denied buffer as arguments
+
+    // Print "Entered message: " followed by the original message
+    Call printf with original string and denied buffer as arguments
+
+    // Encrypt the message
+    Iterate through the characters of the input message:
+        Encrypt each character by adding 10 to its ASCII value
+        Store the encrypted character in denied_encripted buffer
+
+    // Null-terminate the encrypted message
+    Null-terminate the denied_encripted buffer
+
+    // Print "Encrypted message: " followed by the encrypted message
+    Call printf with output_encripted string and denied_encripted buffer as arguments
+
+    // Pop the base pointer from the stack
+    Pop base pointer from the stack
+
+    // Exit the program
+    Set syscall number for exit in %rax
+    Set exit code 0 in %rdi
+    Call syscall

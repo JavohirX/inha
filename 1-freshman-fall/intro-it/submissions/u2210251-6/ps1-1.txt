@@ -1,0 +1,5 @@
+sum = max(sum1,sum2)
+if(sum1 > sum2):
+  add sum to the greater number within the range of sum1 in the next line
+else:
+  add sum to the greater number within the range of sum2 in the next line

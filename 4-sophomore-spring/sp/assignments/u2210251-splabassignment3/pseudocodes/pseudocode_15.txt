@@ -1,0 +1,53 @@
+Declare inputMessage: String = "Enter a string (max: 1024 chars): "
+Declare numberMessage: String = "Numbers: %d\n"
+Declare alphabetMessage: String = "Alphabets: %d\n"
+Declare specialCharactersMessage: String = "Special characters: %d\n"
+Declare totalCharactersMessage: String = "Total Characters: %d\n"
+Declare totalWordMessage: String = "Total Words: %d\n"
+Declare newLine: String = "\n"
+Declare stringFormat: String = "%s\n"
+Declare numberFormat: String = "%d\n"
+Declare skip: Array of Characters of size 1024
+Declare numberCount: Integer = 0
+Declare alphabetCount: Integer = 0
+Declare specialCharactersCount: Integer = 0
+Declare charactersCount: Integer = 0
+Declare wordCount: Integer = 0
+
+Declare rsi: Pointer to Characters
+Declare r8: Integer
+Declare r9: Integer
+Declare r10: Integer
+Declare r11: Integer
+Declare r12: Integer
+
+Display inputMessage to prompt the user to enter a string
+
+Read a string input from the user and store it in the array
+
+Set numberCount, alphabetCount, specialCharactersCount, charactersCount, and wordCount to 0
+
+Set rsi to point to the beginning of the array
+Set r8, r9, r10, r11, and r12 to 0
+
+Iterate through each character, char, in the skip array:
+    If char is a space:
+        Increment wordCount
+        Increment charactersCount
+    Else if char is an alphabet character:
+        Increment alphabetCount
+        Increment charactersCount
+    Else if char is a digit between '0' and '9':
+        Increment numberCount
+        Increment charactersCount
+    Else:
+        Increment specialCharactersCount
+        Increment charactersCount
+
+Output "Analysis of the input string:" followed by newLine
+Output "-----------------------------------" followed by newLine
+Output "Numbers: " concatenated with numberCount using numberMessage
+Output "Alphabets: " concatenated with alphabetCount using alphabetMessage
+Output "Special characters: " concatenated with specialCharactersCount using specialCharactersMessage
+Output "Total Characters: " concatenated with charactersCount using totalCharactersMessage
+Output "Total Words: " concatenated with wordCount using totalWordMessage

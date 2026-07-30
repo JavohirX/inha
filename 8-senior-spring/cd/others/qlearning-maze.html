@@ -1,0 +1,681 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Q-Learning Maze — CSE4020 Capstone Design</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Segoe UI', Arial, sans-serif;
+    background: #f4f6f9;
+    color: #1a1a2e;
+    min-height: 100vh;
+    padding: 20px;
+  }
+
+  header {
+    text-align: center;
+    margin-bottom: 24px;
+  }
+  header h1 { font-size: 24px; font-weight: 700; color: #1a1a2e; }
+  header p  { font-size: 14px; color: #555; margin-top: 4px; }
+
+  .main-layout {
+    display: grid;
+    grid-template-columns: 320px 1fr;
+    gap: 20px;
+    max-width: 1100px;
+    margin: 0 auto;
+  }
+
+  /* ── CARD ── */
+  .card {
+    background: #fff;
+    border-radius: 12px;
+    padding: 18px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+  }
+  .card-title {
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+    color: #888;
+    margin-bottom: 12px;
+  }
+
+  /* ── MAZE ── */
+  .maze-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 88px);
+    grid-template-rows: repeat(3, 88px);
+    gap: 4px;
+    margin: 0 auto;
+    width: fit-content;
+  }
+  .cell {
+    width: 88px; height: 88px;
+    border-radius: 10px;
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    font-size: 13px; font-weight: 600;
+    border: 2px solid transparent;
+    transition: background .25s, border-color .25s;
+    position: relative;
+  }
+  .cell .badge { font-size: 22px; margin-bottom: 2px; }
+  .cell .sname { font-size: 10px; font-weight: 500; opacity: .7; }
+  .cell .qbest { font-size: 10px; margin-top: 3px; font-family: monospace; }
+
+  .cell.start  { background: #dbeafe; color: #1e40af; border-color: #93c5fd; }
+  .cell.goal   { background: #dcfce7; color: #166534; border-color: #86efac; }
+  .cell.wall   { background: #e5e7eb; color: #9ca3af; border-color: #d1d5db; cursor: not-allowed; }
+  .cell.empty  { background: #f9fafb; color: #374151; border-color: #e5e7eb; }
+  .cell.agent  { background: #fef3c7; color: #92400e; border-color: #f59e0b; transform: scale(1.05); }
+  .cell.visited { background: #ede9fe; color: #4c1d95; border-color: #c4b5fd; }
+
+  /* ── STATS ── */
+  .stats-row {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 8px;
+    margin-top: 14px;
+  }
+  .stat {
+    background: #f9fafb;
+    border-radius: 8px;
+    padding: 8px 6px;
+    text-align: center;
+    border: 1px solid #e5e7eb;
+  }
+  .stat .sv { font-size: 20px; font-weight: 700; color: #1a1a2e; }
+  .stat .sl { font-size: 10px; color: #888; margin-top: 2px; }
+
+  /* ── CONTROLS ── */
+  .btn-row { display: flex; gap: 8px; margin-top: 14px; flex-wrap: wrap; }
+  button {
+    flex: 1;
+    padding: 9px 10px;
+    border-radius: 8px;
+    border: 1.5px solid #d1d5db;
+    background: #fff;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    color: #374151;
+    transition: background .15s, border-color .15s, transform .1s;
+  }
+  button:hover  { background: #f3f4f6; border-color: #9ca3af; }
+  button:active { transform: scale(.97); }
+  button:disabled { opacity: .45; cursor: not-allowed; }
+
+  button.primary {
+    background: #3b82f6; color: #fff;
+    border-color: #2563eb;
+  }
+  button.primary:hover { background: #2563eb; }
+  button.success {
+    background: #22c55e; color: #fff;
+    border-color: #16a34a;
+  }
+  button.success:hover { background: #16a34a; }
+  button.danger {
+    background: #ef4444; color: #fff;
+    border-color: #dc2626;
+  }
+  button.danger:hover { background: #dc2626; }
+
+  /* ── SLIDER ── */
+  .slider-row { margin-top: 12px; }
+  .slider-row label { font-size: 12px; color: #555; display: flex; justify-content: space-between; margin-bottom: 4px; }
+  input[type=range] { width: 100%; accent-color: #3b82f6; }
+
+  /* ── SPEED ── */
+  .speed-row { margin-top: 10px; }
+  .speed-row label { font-size: 12px; color: #555; display: flex; justify-content: space-between; margin-bottom: 4px; }
+
+  /* ── LOG ── */
+  .log {
+    background: #1e1e2e;
+    border-radius: 8px;
+    padding: 10px 12px;
+    font-family: 'Courier New', monospace;
+    font-size: 12px;
+    height: 110px;
+    overflow-y: auto;
+    color: #cdd6f4;
+    line-height: 1.7;
+    margin-top: 12px;
+  }
+  .log .step   { color: #89dceb; }
+  .log .update { color: #a6e3a1; }
+  .log .reward { color: #f9e2af; }
+  .log .done   { color: #cba6f7; font-weight: 700; }
+  .log .wall   { color: #f38ba8; }
+
+  /* ── BELLMAN BOX ── */
+  .bellman-box {
+    background: #1e1e2e;
+    border-radius: 8px;
+    padding: 10px 14px;
+    font-family: 'Courier New', monospace;
+    font-size: 12px;
+    color: #a6e3a1;
+    min-height: 56px;
+    line-height: 1.8;
+    margin-top: 10px;
+    word-break: break-all;
+  }
+  .bellman-box .lbl { color: #89b4fa; font-size: 11px; margin-bottom: 4px; }
+
+  /* ── Q-TABLE ── */
+  .qtable-wrap { overflow-x: auto; margin-top: 4px; }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 12px;
+  }
+  th {
+    background: #f3f4f6;
+    padding: 7px 10px;
+    text-align: center;
+    font-weight: 700;
+    font-size: 11px;
+    border: 1px solid #e5e7eb;
+    color: #374151;
+  }
+  td {
+    padding: 6px 10px;
+    text-align: center;
+    border: 1px solid #f0f0f0;
+    font-family: 'Courier New', monospace;
+    font-size: 12px;
+    color: #374151;
+  }
+  tr.hl td { background: #fef9c3; }
+  td.best { color: #15803d; font-weight: 700; }
+  td.neg  { color: #b91c1c; }
+  td.pos  { color: #15803d; }
+
+  /* ── LEGEND ── */
+  .legend {
+    display: flex; gap: 10px; flex-wrap: wrap;
+    margin-top: 14px;
+  }
+  .leg-item {
+    display: flex; align-items: center; gap: 5px;
+    font-size: 11px; color: #555;
+  }
+  .leg-dot {
+    width: 12px; height: 12px;
+    border-radius: 3px;
+    border: 1.5px solid rgba(0,0,0,.15);
+  }
+
+  /* ── FORMULA ── */
+  .formula {
+    background: #f0f9ff;
+    border-left: 4px solid #3b82f6;
+    border-radius: 0 8px 8px 0;
+    padding: 10px 14px;
+    font-family: 'Courier New', monospace;
+    font-size: 13px;
+    color: #1e40af;
+    margin-bottom: 14px;
+    line-height: 1.8;
+  }
+
+  /* ── PARAMS ── */
+  .params {
+    display: flex; gap: 8px; flex-wrap: wrap;
+    margin-bottom: 12px;
+  }
+  .param-pill {
+    background: #eff6ff;
+    border: 1px solid #bfdbfe;
+    border-radius: 20px;
+    padding: 4px 12px;
+    font-size: 12px;
+    font-weight: 600;
+    color: #1d4ed8;
+  }
+
+  /* ── PATH DISPLAY ── */
+  .path-display {
+    background: #f0fdf4;
+    border: 1px solid #bbf7d0;
+    border-radius: 8px;
+    padding: 8px 12px;
+    font-size: 12px;
+    color: #166534;
+    font-family: 'Courier New', monospace;
+    margin-top: 10px;
+    min-height: 32px;
+  }
+
+  @media (max-width: 780px) {
+    .main-layout { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>🤖 Q-Learning Maze Solver</h1>
+  <p>CSE4020 Capstone Design — Reinforcement Learning Interactive Demo</p>
+</header>
+
+<div class="main-layout">
+
+  <!-- LEFT PANEL -->
+  <div>
+    <div class="card">
+      <div class="card-title">Maze — Agent Position</div>
+      <div class="maze-grid" id="maze"></div>
+
+      <div class="legend">
+        <div class="leg-item"><div class="leg-dot" style="background:#dbeafe;border-color:#93c5fd"></div> Start (s₀)</div>
+        <div class="leg-item"><div class="leg-dot" style="background:#dcfce7;border-color:#86efac"></div> Goal (s₆)</div>
+        <div class="leg-item"><div class="leg-dot" style="background:#e5e7eb;border-color:#d1d5db"></div> Wall</div>
+        <div class="leg-item"><div class="leg-dot" style="background:#fef3c7;border-color:#f59e0b"></div> Agent 🤖</div>
+        <div class="leg-item"><div class="leg-dot" style="background:#ede9fe;border-color:#c4b5fd"></div> Visited</div>
+      </div>
+
+      <div class="stats-row">
+        <div class="stat"><div class="sv" id="ep-count">0</div><div class="sl">Episode</div></div>
+        <div class="stat"><div class="sv" id="step-count">0</div><div class="sl">Steps</div></div>
+        <div class="stat"><div class="sv" id="total-rew">0.0</div><div class="sl">Reward</div></div>
+        <div class="stat"><div class="sv" id="wins">0</div><div class="sl">Goals Hit</div></div>
+      </div>
+
+      <div class="btn-row">
+        <button class="primary" onclick="stepOnce()" id="btn-step">⏩ Step</button>
+        <button class="success" onclick="runEpisode()" id="btn-ep">▶ Episode</button>
+        <button onclick="train(50)" id="btn-train">🚀 Train ×50</button>
+        <button onclick="train(200)" id="btn-train2">🚀 Train ×200</button>
+        <button class="danger" onclick="resetAll()">↺ Reset</button>
+      </div>
+
+      <div class="slider-row">
+        <label>
+          <span>ε Exploration: <strong id="eps-label">0.30</strong></span>
+          <span style="font-size:11px;color:#aaa">0 = always exploit · 1 = always random</span>
+        </label>
+        <input type="range" min="0" max="100" value="30"
+               oninput="EPS=this.value/100; document.getElementById('eps-label').textContent=EPS.toFixed(2)">
+      </div>
+
+      <div class="speed-row">
+        <label>
+          <span>Animation Speed</span>
+          <span id="speed-label">Medium</span>
+        </label>
+        <input type="range" min="0" max="4" value="2" id="speed-slider"
+               oninput="setSpeed(this.value)">
+      </div>
+
+      <div class="path-display" id="path-display">Current path: —</div>
+
+      <div class="log" id="log"><span style="color:#89b4fa">Ready. Press Step or Episode to begin.</span></div>
+    </div>
+  </div>
+
+  <!-- RIGHT PANEL -->
+  <div style="display:flex;flex-direction:column;gap:16px;">
+
+    <div class="card">
+      <div class="card-title">Bellman Update Formula</div>
+      <div class="formula">
+        Q(s,a) ← Q(s,a) + α × [ R + γ × max Q(s',a') − Q(s,a) ]
+      </div>
+      <div class="params">
+        <span class="param-pill">α = 0.5 (learning rate)</span>
+        <span class="param-pill">γ = 0.9 (discount factor)</span>
+        <span class="param-pill">R(goal) = +10</span>
+        <span class="param-pill">R(wall) = −1</span>
+        <span class="param-pill">R(step) = −0.1</span>
+      </div>
+      <div class="card-title" style="margin-top:4px">Last Bellman Update</div>
+      <div class="bellman-box" id="bellman-box">
+        <div class="lbl">Waiting for first step...</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Q-Table — Q(state, action) · Green = best action per row</div>
+      <div class="qtable-wrap">
+        <table id="qtable">
+          <thead>
+            <tr>
+              <th>State</th>
+              <th>↑ Up</th>
+              <th>↓ Down</th>
+              <th>← Left</th>
+              <th>→ Right</th>
+              <th>Best Q</th>
+              <th>Policy</th>
+            </tr>
+          </thead>
+          <tbody id="qtbody"></tbody>
+        </table>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+// ── CONSTANTS ──────────────────────────────────────────────
+const ALPHA = 0.5, GAMMA = 0.9;
+let EPS = 0.3;
+const ROWS = 3, COLS = 3;
+const WALLS = new Set([2, 4]);
+const GOAL = 8, START = 0;
+const ACTIONS = [[-1,0],[1,0],[0,-1],[0,1]];
+const ANAMES  = ['↑','↓','←','→'];
+const AWORDS  = ['Up','Down','Left','Right'];
+
+const STATE_MAP = {0:'s₀',1:'s₁',3:'s₂',5:'s₃',6:'s₄',7:'s₅',8:'s₆'};
+const CELL_LABEL = {0:'Start',8:'Goal'};
+const VALID = [0,1,3,5,6,7,8];
+
+// Speed settings: delay in ms for auto-episode
+const SPEEDS = [500, 250, 120, 50, 10];
+const SPEED_LABELS = ['Very Slow','Slow','Medium','Fast','Instant'];
+let animDelay = 120;
+
+function setSpeed(v){
+  animDelay = SPEEDS[v];
+  document.getElementById('speed-label').textContent = SPEED_LABELS[v];
+}
+
+// ── STATE ──────────────────────────────────────────────────
+let Q = {}, agentCell = START;
+let episodeN = 0, stepN = 0, totalRew = 0, wins = 0;
+let currentPath = [START];
+let highlightState = -1;
+let isRunning = false;
+
+function initQ(){
+  Q = {};
+  VALID.forEach(s => { Q[s] = [0,0,0,0]; });
+}
+
+// ── MAZE HELPERS ───────────────────────────────────────────
+function cellToRC(c){ return [Math.floor(c/COLS), c%COLS]; }
+function rcToCell(r,c){ return r*COLS+c; }
+
+function getNextState(cell, a){
+  const [r,c] = cellToRC(cell);
+  const [dr,dc] = ACTIONS[a];
+  const nr=r+dr, nc=c+dc;
+  if(nr<0||nr>=ROWS||nc<0||nc>=COLS) return null;
+  const ns = rcToCell(nr,nc);
+  if(WALLS.has(ns)) return null;
+  return ns;
+}
+
+function getReward(ns, valid){
+  if(!valid) return -1;
+  if(ns===GOAL) return 10;
+  return -0.1;
+}
+
+// ── CORE Q-LEARNING STEP ──────────────────────────────────
+function qStep(){
+  if(agentCell===GOAL) return {done:true};
+
+  // Choose action (ε-greedy)
+  const validAs = ACTIONS.map((_,i)=>i).filter(i=>getNextState(agentCell,i)!==null);
+  let action, isExplore;
+
+  if(Math.random() < EPS || validAs.length===0){
+    const pool = validAs.length>0 ? validAs : ACTIONS.map((_,i)=>i);
+    action = pool[Math.floor(Math.random()*pool.length)];
+    isExplore = true;
+  } else {
+    action = Q[agentCell].reduce((best,v,i)=>v>Q[agentCell][best]?i:best, 0);
+    isExplore = false;
+  }
+
+  const ns     = getNextState(agentCell, action);
+  const valid  = ns !== null;
+  const next   = valid ? ns : agentCell;
+  const r      = getReward(next, valid);
+
+  const oldQ   = Q[agentCell][action];
+  const futureQ = (next===GOAL) ? 0 : Math.max(...Q[next]);
+  const newQ   = oldQ + ALPHA*(r + GAMMA*futureQ - oldQ);
+
+  const prevCell = agentCell;
+  Q[agentCell][action] = parseFloat(newQ.toFixed(4));
+  agentCell = next;
+  totalRew += r;
+  stepN++;
+
+  if(!WALLS.has(next)) currentPath.push(next);
+
+  // Build Bellman string
+  const sName  = STATE_MAP[prevCell] || prevCell;
+  const s2Name = STATE_MAP[next] || next;
+  const bellman = [
+    `Q(${sName}, ${ANAMES[action]}) ← ${oldQ.toFixed(4)} + 0.5 × [${r.toFixed(1)} + 0.9 × ${futureQ.toFixed(4)} − ${oldQ.toFixed(4)}]`,
+    `         = ${oldQ.toFixed(4)} + 0.5 × ${(r + GAMMA*futureQ - oldQ).toFixed(4)}`,
+    `         = ${newQ.toFixed(4)}`
+  ].join('\n');
+
+  return {
+    done: agentCell===GOAL,
+    prevCell, action, next, r,
+    oldQ: oldQ.toFixed(4),
+    newQ: newQ.toFixed(4),
+    bellman, valid, isExplore
+  };
+}
+
+// ── RENDER ────────────────────────────────────────────────
+function renderMaze(){
+  const m = document.getElementById('maze');
+  m.innerHTML = '';
+  const visitedSet = new Set(currentPath);
+
+  for(let i=0; i<9; i++){
+    const d = document.createElement('div');
+    d.className = 'cell';
+
+    if(WALLS.has(i)){
+      d.className += ' wall';
+      d.innerHTML = `<div class="badge">🧱</div><div class="sname">Wall</div>`;
+    } else {
+      const isAgent = (i===agentCell);
+      const isGoal  = (i===GOAL);
+      const isStart = (i===START);
+      const visited = visitedSet.has(i) && !isAgent;
+
+      if(isAgent)       d.className += ' agent';
+      else if(isGoal)   d.className += ' goal';
+      else if(isStart)  d.className += ' start';
+      else if(visited)  d.className += ' visited';
+      else              d.className += ' empty';
+
+      const badge = isAgent ? '🤖' : (isGoal ? '🏁' : (isStart ? '🚀' : ''));
+      const sn = STATE_MAP[i] || '';
+      const bq = Q[i] ? Math.max(...Q[i]).toFixed(2) : '—';
+      const cl = CELL_LABEL[i] ? `<div class="sname">${CELL_LABEL[i]}</div>` : '';
+
+      d.innerHTML = `
+        <div class="badge">${badge}</div>
+        <div class="sname">${sn}</div>
+        ${cl}
+        <div class="qbest">${(WALLS.has(i)||i===GOAL)?'':'best:'+bq}</div>`;
+    }
+    m.appendChild(d);
+  }
+}
+
+function renderQTable(hl=-1){
+  const tb = document.getElementById('qtbody');
+  tb.innerHTML = '';
+  VALID.forEach(s => {
+    const tr = document.createElement('tr');
+    if(s===hl) tr.className='hl';
+    const best = Math.max(...Q[s]);
+    const bestI = Q[s].indexOf(best);
+    const policyArrow = ANAMES[bestI];
+
+    let cells = `<td><strong>${STATE_MAP[s]||s}</strong>${s===START?' 🚀':s===GOAL?' 🏁':''}</td>`;
+    Q[s].forEach((v,i) => {
+      const isBest = (i===bestI && s!==GOAL);
+      const cls = isBest ? 'best' : (v<0 ? 'neg' : (v>0 ? 'pos' : ''));
+      cells += `<td class="${cls}">${v.toFixed(3)}</td>`;
+    });
+    cells += `<td class="${best>0?'best':best<0?'neg':''}">${best.toFixed(3)}</td>`;
+    cells += `<td style="font-size:16px">${s===GOAL?'—':policyArrow}</td>`;
+    tr.innerHTML = cells;
+    tb.appendChild(tr);
+  });
+}
+
+function updateStats(){
+  document.getElementById('ep-count').textContent  = episodeN;
+  document.getElementById('step-count').textContent = stepN;
+  document.getElementById('total-rew').textContent  = totalRew.toFixed(1);
+  document.getElementById('wins').textContent        = wins;
+  const pathStr = currentPath.map(c=>STATE_MAP[c]||c).join(' → ');
+  document.getElementById('path-display').textContent = 'Current path: ' + pathStr;
+}
+
+function addLog(html){
+  const l = document.getElementById('log');
+  const div = document.createElement('div');
+  div.innerHTML = html;
+  l.appendChild(div);
+  l.scrollTop = l.scrollHeight;
+}
+
+function setBellman(text){
+  document.getElementById('bellman-box').innerHTML =
+    `<div class="lbl">Q(s, a) ← Q(s,a) + α×[R + γ×max Q(s',a') − Q(s,a)]</div><pre style="margin:0;white-space:pre-wrap;color:#a6e3a1">${text}</pre>`;
+}
+
+// ── CONTROLS ──────────────────────────────────────────────
+function stepOnce(){
+  if(agentCell===GOAL){
+    addLog(`<span class="done">Episode complete. Click Episode or Reset.</span>`);
+    return;
+  }
+  const res = qStep();
+  renderMaze();
+  renderQTable(res.prevCell);
+  updateStats();
+  if(res.bellman) setBellman(res.bellman);
+
+  const rStr  = res.r>=0
+    ? `<span class="reward">R=+${res.r.toFixed(1)}</span>`
+    : `<span style="color:#f38ba8">R=${res.r.toFixed(1)}</span>`;
+  const mode  = res.isExplore
+    ? `<span style="color:#fab387">[explore]</span>`
+    : `<span style="color:#89dceb">[exploit]</span>`;
+  const hitWall = !res.valid ? `<span class="wall"> WALL!</span>` : '';
+
+  addLog(`<span class="step">${STATE_MAP[res.prevCell]}→${ANAMES[res.action]}→${STATE_MAP[res.next]||res.next}</span> ${rStr} Q=${res.newQ} ${mode}${hitWall}`);
+
+  if(res.done){
+    wins++;
+    updateStats();
+    addLog(`<span class="done">✅ Goal reached! Episode ${episodeN+1} complete.</span>`);
+  }
+}
+
+async function runEpisode(){
+  if(isRunning) return;
+  isRunning = true;
+  setButtons(true);
+
+  // Reset position for new episode
+  agentCell = START;
+  episodeN++;
+  currentPath = [START];
+  addLog(`<span style="color:#89b4fa">─── Episode ${episodeN} start ───</span>`);
+
+  let limit = 150;
+  while(agentCell!==GOAL && limit-->0){
+    const res = qStep();
+    renderMaze();
+    renderQTable(res.prevCell);
+    updateStats();
+    if(res.bellman) setBellman(res.bellman);
+
+    const rStr = res.r>=0
+      ? `<span class="reward">R=+${res.r.toFixed(1)}</span>`
+      : `<span style="color:#f38ba8">R=${res.r.toFixed(1)}</span>`;
+    const hitWall = !res.valid ? ` <span class="wall">WALL</span>` : '';
+    addLog(`<span class="step">${STATE_MAP[res.prevCell]}→${ANAMES[res.action]}→${STATE_MAP[res.next]||res.next}</span> ${rStr} Q=${res.newQ}${hitWall}`);
+
+    if(res.done){ wins++; updateStats(); addLog(`<span class="done">✅ Goal reached in ${currentPath.length-1} steps!</span>`); break; }
+    if(animDelay>0) await sleep(animDelay);
+  }
+  if(agentCell!==GOAL) addLog(`<span style="color:#f38ba8">⚠ Step limit reached.</span>`);
+
+  isRunning = false;
+  setButtons(false);
+}
+
+async function train(n){
+  if(isRunning) return;
+  isRunning = true;
+  setButtons(true);
+  addLog(`<span style="color:#89b4fa">─── Training ${n} episodes... ───</span>`);
+
+  for(let e=0; e<n; e++){
+    agentCell = START;
+    episodeN++;
+    currentPath = [START];
+    let limit=150, reached=false;
+    while(agentCell!==GOAL && limit-->0){
+      const res=qStep();
+      if(res.done){wins++;reached=true;break;}
+    }
+    if(e%10===0){
+      renderMaze(); renderQTable(); updateStats();
+      if(animDelay>30) await sleep(20);
+    }
+  }
+
+  agentCell=START; currentPath=[START];
+  renderMaze(); renderQTable(); updateStats();
+  addLog(`<span class="done">🎓 Training done! ${episodeN} episodes, ${wins} goals reached.</span>`);
+  addLog(`<span style="color:#cba6f7">Q-table converged. Try Step or Episode to see optimal policy.</span>`);
+
+  isRunning=false;
+  setButtons(false);
+}
+
+function resetAll(){
+  if(isRunning) return;
+  initQ();
+  agentCell=START; episodeN=0; stepN=0; totalRew=0; wins=0;
+  currentPath=[START]; highlightState=-1;
+  document.getElementById('log').innerHTML='<span style="color:#89b4fa">Reset. Ready.</span>';
+  document.getElementById('bellman-box').innerHTML='<div class="lbl">Waiting for first step...</div>';
+  renderMaze(); renderQTable(); updateStats();
+}
+
+function setButtons(disabled){
+  ['btn-step','btn-ep','btn-train','btn-train2'].forEach(id=>{
+    document.getElementById(id).disabled=disabled;
+  });
+}
+
+function sleep(ms){ return new Promise(r=>setTimeout(r,ms)); }
+
+// ── INIT ──────────────────────────────────────────────────
+initQ();
+renderMaze();
+renderQTable();
+updateStats();
+</script>
+</body>
+</html>

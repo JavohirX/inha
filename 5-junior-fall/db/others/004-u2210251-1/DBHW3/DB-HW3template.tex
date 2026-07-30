@@ -1,0 +1,1933 @@
+\documentclass[12pt]{article}
+\RequirePackage[2020-02-02]{latexrelease}
+\usepackage[utf8x]{inputenc}  
+\usepackage[english]{babel}
+\usepackage{MnSymbol} 
+\usepackage{times}  % Times Roman font
+%\usepackage{helvet} % Helvetica font
+%\renewcommand{\familydefault}{\sfdefault} % font
+\usepackage{graphicx} % se uso picture with pdflatex
+\usepackage[pdftex]{hyperref} % To enable hyperlinks with pdflatex
+\usepackage{tikz}  % used ALSO for positioning of logo 
+\usepackage{listings}  % needed to write SQL - see next
+
+% NB: Every team can adapt the setting of their SQL code
+% by changing the parameters in their \lstset - here is a defalut:
+\lstset{
+    language=SQL,  % Language is SQL
+    basicstyle=\normalfont\bfseries,  % Normal font with bold
+    keywordstyle=\color{blue},  % Keywords in blue
+    backgroundcolor=\color{gray},  % Background color (define backcolour elsewhere)
+    belowskip=3mm,  % Space below each code block
+    breakatwhitespace=true,  % Break lines at whitespace
+    breaklines=true,  % Enable line breaks
+    classoffset=0,  % Class offset for formatting
+    columns=flexible,  % Flexible column width
+    commentstyle=\color{yellow},  % Comments in dark green
+    framexleftmargin=0.25em,  % Left margin for the frame
+    numbers=none,  % No line numbers (set `numbers=left` if needed)
+    numberstyle=\tiny\color{gray},  % Style for line numbers if enabled
+    showstringspaces=false,  % Do not show spaces in strings
+    stringstyle=\color{orange},  % Strings in mauve color
+    tabsize=3,  % Set tab size to 3
+    xleftmargin=1em  % Left margin for code blocks
+}
+
+%%% FORMST / MARGINS %%%
+\setlength{\oddsidemargin}{0.05 true in}
+\setlength{\evensidemargin}{0.05 true in}
+\setlength{\textwidth}{6.2 true in}
+\setlength{\textheight}{9.20 in} % 9.80 in
+\setlength{\topmargin}{-0.35 in} % -0.55 in
+
+%%\evensidemargin 36pt\oddsidemargin 36pt\textwidth 5.4in
+%%\topmargin 0pt \addtolength{\textheight}{1.0truein}
+
+
+%%%%%%%%%%%%   MACROS AND PACKAGES SPECIFIC TO **YOUR** HOMEWORK  %%%%%%%%%%%%%%
+%%%%%%%%%
+%%%%%%%%%
+%%%%%%%%%
+
+% TO DO
+
+%%%%%%%%%
+%%%%%%%%%
+%%%%%%%%%
+%%%%%%%%%%%% END MACROS SPECIFIC TO THIS BOOK %%%%%%%%%%%%%%%
+
+
+\includeonly{}
+
+
+\begin{document}
+%\noindent\rule{\textwidth}{1pt}
+%\pagenumbering{roman}
+%\pagestyle{plain}
+\thispagestyle{empty}
+\input{DB-HW3cover}
+
+\begingroup
+\hypersetup{linkcolor=black}
+%\hypersetup{linkcolor=blue}
+
+\bibliographystyle{plain}      
+%\bibliographystyle{abbrv}     % as plain except uses abbreviations for first names,
+                               % month names, and journal names
+
+\pagenumbering{arabic}
+\setcounter{page}{1}
+\pagestyle{plain}
+\section{Translate from English}
+\section*{Question 1}
+
+\textbf{1. Write a language-equivalent query in SQL (cf. Definition 1, page 2).}
+
+\begin{lstlisting}
+SELECT DISTINCT S.name
+FROM student S
+WHERE S.tot_cred <= ALL (
+    SELECT S2.tot_cred
+    FROM student S2
+    JOIN takes T ON S2.ID = T.ID
+    JOIN course C ON T.course_id = C.course_id
+    WHERE C.dept_name = 'Computer Science'
+);
+\end{lstlisting}
+
+\textbf{2. Write a language-equivalent RA’s expression (cf. Definition 1, page 2).}
+
+\[
+\pi_{\text{name}} \left( \sigma_{\text{tot\_cred} \leq \text{ALL}(\pi_{\text{tot\_cred}} (\sigma_{\text{dept\_name}} = 'Computer Science' ( \text{student} \ \Join \ \text{takes} \ \Join \ \text{course})))} \right) (\text{student})
+\]
+\\
+\textbf{3. (optional) Write a language-equivalent TRC’s expression (cf. Definition 1, page 2).}
+
+\begin{lstlisting}
+{S.name | ∃S2 ∈ student ∧ ∃T ∈ takes ∧ ∃C ∈ course (S2.ID = T.ID ∧ T.course_id = C.course_id ∧ C.dept_name = 'Computer Science' ∧ S2.tot_cred ≤ S.tot_cred)}
+\end{lstlisting}
+
+\textbf{4. (optional) Write a language-equivalent DRC’s expression (cf. Definition 1, page 2).}
+
+\begin{lstlisting}
+{n | ∃s1, s2, t1, t2, c1, c2, d (student(s1, n, d, s2) ∧ takes(t1, s2, c1) ∧ course(c1, c2, d) ∧ c2 = 'Computer Science' ∧ s2 <= s1)}
+\end{lstlisting}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1.0\textwidth]{fig/screenshots/Q1.png}
+    \caption{Screenshot for Question 1}
+\end{figure}
+
+\newpage
+
+\section*{Question 2}
+
+\textbf{1. Write a language-equivalent query in SQL (cf. Definition 1, page 2).}
+
+\begin{lstlisting}
+SELECT S.ID, S.name, T.grade
+FROM student S
+JOIN takes T ON S.ID = T.ID
+WHERE T.grade = 'A+'
+GROUP BY S.ID, S.name
+HAVING COUNT(T.grade) >= 2;
+\end{lstlisting}
+
+\textbf{2. Write a language-equivalent RA’s expression (cf. Definition 1, page 2).}
+
+\begin{lstlisting}
+π_ID, name, grade (σ_grade = 'A+' (student ⨝ takes)) 
+GROUP BY ID, name 
+HAVING COUNT(grade) ≥ 2
+\end{lstlisting}
+
+\textbf{3. Write a language-equivalent TRC’s expression (cf. Definition 1, page 2)}
+
+\begin{lstlisting}
+π_ID, name, grade (σ_grade = 'A+' (student ⨝ takes)) 
+GROUP BY ID, name 
+HAVING COUNT(grade) ≥ 2
+\end{lstlisting}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1.0\textwidth]{fig/screenshots/Q2.png}
+    \caption{Screenshot for Question 2}
+\end{figure}
+
+\clearpage
+
+
+\section*{Question 3}
+
+\textbf{1. Write a language-equivalent query in SQL (cf. Definition 1, page 2).}
+
+\begin{lstlisting}
+SELECT D.dept_name, COUNT(I.ID) AS num_instructors, AVG(I.salary) AS avg_salary
+FROM department D
+JOIN instructor I ON D.dept_name = I.dept_name
+GROUP BY D.dept_name
+HAVING AVG(I.salary) > 45000;
+\end{lstlisting}
+
+\textbf{2. Write a language-equivalent RA’s expression (cf. Definition 1, page 2).}
+
+\begin{lstlisting}
+π_dept_name, COUNT(ID) AS num_instructors, AVG(salary) AS avg_salary (
+    σ_avg_salary > 45000 (
+        (department ⨝ instructor) 
+        GROUP BY dept_name
+    )
+)
+\end{lstlisting}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1.0\textwidth]{fig/screenshots/Q3.png}
+    \caption{Screenshot for Question 3}
+\end{figure}
+
+\clearpage
+
+\section{Translate from SQL}
+
+\section*{Question 4}
+
+\textbf{[Fall 2024, Week 11 (“Bonus Week”); revised] Consider the following SQL query:}
+
+\begin{lstlisting}
+SELECT DISTINCT I.salary
+FROM instructor AS I, instructor AS B
+WHERE I.salary < B.salary AND B.dept_name = "Biology";
+\end{lstlisting}
+
+\textbf{1. Write a language-equivalent RA’s expression (cf. Definition 1, page 2).}
+
+\begin{lstlisting}
+π_salary (σ(I.salary < B.salary ∧ B.dept_name = 'Biology') (instructor ⨝ instructor))
+\end{lstlisting}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1.0\textwidth]{fig/screenshots/Q4.png}
+    \caption{Screenshot for Question 4}
+\end{figure}
+
+\textbf{2. Write a language-equivalent TRC’s expression (cf. Definition 1, page 2).}
+
+\begin{lstlisting}
+π_salary (σ(I.salary < B.salary ∧ B.dept_name = 'Biology') (instructor ⨝ instructor))\end{lstlisting}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1.0\textwidth]{fig/screenshots/Q4.png}
+    \caption{Screenshot for Question 4}
+\end{figure}
+
+\clearpage
+
+\section*{Question 5}
+
+\textbf{1. Write a language-equivalent query in SQL (cf. Definition 1, page 2).}
+
+\begin{lstlisting}
+SELECT name, course_id 
+FROM (SELECT * FROM takes WHERE year >= 2008) AS recent_takes NATURAL JOIN student
+LIMIT 25;
+\end{lstlisting}
+
+\textbf{2. Write a language-equivalent RA’s expression (cf. Definition 1, page 2).}
+
+\begin{lstlisting}
+π_name, course_id (σ_year >= 2008 (takes) ⨝ student)
+\end{lstlisting}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1.0\textwidth]{fig/screenshots/Q5.png}
+    \caption{Screenshot for Question 5}
+\end{figure}
+
+\clearpage
+
+
+\section*{Question 6}
+
+\textbf{1. Write a language-equivalent query in SQL (cf. Definition 1, page 2).}
+
+\begin{lstlisting}
+SELECT dept_name, AVG(salary) AS avg_salary
+FROM instructor
+GROUP BY dept_name
+HAVING avg_salary > 73000;
+\end{lstlisting}
+
+\textbf{2. Write a language-equivalent RA’s expression (cf. Definition 1, page 2).}
+
+\begin{lstlisting}
+π_dept_name, avg_salary (σ_avg_salary > 73000 (γ_dept_name; AVG(salary) → avg_salary (instructor)))
+\end{lstlisting}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1.0\textwidth]{fig/screenshots/Q6.png}
+    \caption{Screenshot for Question 6}
+\end{figure}
+
+\clearpage
+
+
+\section*{Question 7}
+
+\textbf{1. Write a language-equivalent query in SQL (cf. Definition 1, page 2).}
+
+\begin{lstlisting}
+(SELECT course_id 
+ FROM section 
+ WHERE semester = "Fall" AND year = 2009) 
+UNION 
+(SELECT course_id 
+ FROM section 
+ WHERE semester = "Spring" AND year = 2010);
+\end{lstlisting}
+
+\textbf{2. Write a language-equivalent RA’s expression (cf. Definition 1, page 2).}
+
+\begin{lstlisting}
+π_course_id (σ_semester = "Fall" ∧ year = 2009 (section)) 
+∪ 
+π_course_id (σ_semester = "Spring" ∧ year = 2010 (section))
+\end{lstlisting}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1.0\textwidth]{fig/screenshots/Q7.png}
+    \caption{Screenshot for Question 7}
+\end{figure}
+
+\clearpage
+
+
+\section*{Question 8}
+
+\textbf{1. Write a language-equivalent query in SQL (cf. Definition 1, page 2).}
+
+\begin{lstlisting}
+(SELECT course_id 
+ FROM section 
+ WHERE semester = "Fall" AND year = 2009) 
+INTERSECT 
+(SELECT course_id 
+ FROM section 
+ WHERE semester = "Spring" AND year = 2010);
+\end{lstlisting}
+
+\textbf{2. Write a language-equivalent RA’s expression (cf. Definition 1, page 2).}
+
+\begin{lstlisting}
+π_course_id (σ_semester = "Fall" ∧ year = 2009 (section)) 
+∩ 
+π_course_id (σ_semester = "Spring" ∧ year = 2010 (section))
+\end{lstlisting}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1.0\textwidth]{fig/screenshots/Q8.png}
+    \caption{Screenshot for Question 8}
+\end{figure}
+
+\clearpage
+
+
+\section*{Question 9}
+
+\textbf{1. Write a language-equivalent query in SQL (cf. Definition 1, page 2).}
+
+\begin{lstlisting}
+(SELECT course_id 
+ FROM section 
+ WHERE semester = "Fall" AND year = 2009) 
+EXCEPT 
+(SELECT course_id 
+ FROM section 
+ WHERE semester = "Spring" AND year = 2010);
+\end{lstlisting}
+
+\textbf{2. Write a language-equivalent RA’s expression (cf. Definition 1, page 2).}
+
+\begin{lstlisting}
+π_course_id (σ_semester = "Fall" ∧ year = 2009 (section)) 
+− 
+π_course_id (σ_semester = "Spring" ∧ year = 2010 (section))
+\end{lstlisting}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1.0\textwidth]{fig/screenshots/Q9.png}
+    \caption{Screenshot for Question 9}
+\end{figure}
+\clearpage
+
+
+\section*{Question 10}
+
+\textbf{1. Write a language-equivalent query in SQL (cf. Definition 1, page 2).}
+
+\begin{lstlisting}
+SELECT best.ID, instructor.salary
+FROM (
+    SELECT MAX(test.cnt) AS max_cnt, test.ID
+    FROM (
+        SELECT ID, COUNT(DISTINCT course_id) AS cnt
+        FROM teaches
+        GROUP BY ID
+    ) AS test
+    GROUP BY test.ID
+) AS best
+JOIN instructor ON instructor.ID = best.ID;
+\end{lstlisting}
+
+\textbf{2. Write a language-equivalent RA’s expression (cf. Definition 1, page 2).}
+
+\begin{lstlisting}
+π_ID, salary ( (π_ID, MAX(cnt) (ρ(cnt, COUNT(DISTINCT course_id)) (σ(ID) (teaches)))) ⨝ instructor )
+\end{lstlisting}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1.0\textwidth]{fig/screenshots/Q10.png}
+    \caption{Screenshot for Question 10}
+\end{figure}
+
+\clearpage
+
+
+\section*{Question 11}
+
+\textbf{1. Write a language-equivalent query in SQL (cf. Definition 1, page 2).}
+
+\begin{lstlisting}
+SELECT name 
+FROM instructor AS I 
+WHERE dept_name = "Comp.Sci" OR salary > 70000;
+\end{lstlisting}
+
+\textbf{2. Write a language-equivalent RA’s expression (cf. Definition 1, page 2).}
+
+\begin{lstlisting}
+π_name(σ_dept_name = 'Comp.Sci' ∨ salary > 70000 (instructor))
+\end{lstlisting}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1.0\textwidth]{fig/screenshots/Q11.png}
+    \caption{Screenshot for Question 11}
+\end{figure}
+\clearpage
+
+\section*{Question 12}
+
+\textbf{1. Write a language-equivalent query in SQL (cf. Definition 1, page 2).}
+
+\begin{lstlisting}
+SELECT name, D.dept_name, building
+FROM instructor AS I 
+CROSS JOIN department AS D
+WHERE I.dept_name = D.dept_name;
+\end{lstlisting}
+
+\textbf{2. Write a language-equivalent RA’s expression (cf. Definition 1, page 2).}
+
+\begin{lstlisting}
+π_name, dept_name, building (σ_instructor.dept_name = department.dept_name (instructor × department))
+\end{lstlisting}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1.0\textwidth]{fig/screenshots/Q12.png}
+    \caption{Screenshot for Question 12}
+\end{figure}
+
+\clearpage
+
+
+\section*{Question 13}
+
+\textbf{1. Write a language-equivalent query in SQL (cf. Definition 1, page 2).}
+
+\begin{lstlisting}
+SELECT * 
+FROM instructor AS I 
+JOIN department AS D 
+ON I.dept_name = D.dept_name;
+\end{lstlisting}
+
+\textbf{2. Write a language-equivalent RA’s expression (cf. Definition 1, page 2).}
+
+\begin{lstlisting}
+instructor ⨝ (instructor.dept_name = department.dept_name) department
+\end{lstlisting}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1.0\textwidth]{fig/screenshots/Q13.png}
+    \caption{Screenshot for Question 13}
+\end{figure}
+
+\clearpage
+
+
+\section*{Question 14}
+
+\textbf{1. Write a language-equivalent query in SQL (cf. Definition 1, page 2).}
+
+\begin{lstlisting}
+SELECT * 
+FROM instructor AS I 
+NATURAL JOIN department;
+\end{lstlisting}
+
+\textbf{2. Write a language-equivalent RA’s expression (cf. Definition 1, page 2).}
+
+\begin{lstlisting}
+instructor ⨝ department
+\end{lstlisting}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1.0\textwidth]{fig/screenshots/Q14.png}
+    \caption{Screenshot for Question 14}
+\end{figure}
+
+\clearpage
+
+
+\section*{Question 15}
+
+\textbf{1. Write a language-equivalent query in SQL (cf. Definition 1, page 2).}
+
+\begin{lstlisting}
+SELECT name, course_id 
+FROM instructor 
+CROSS JOIN teaches 
+WHERE instructor.ID = teaches.ID;
+\end{lstlisting}
+
+\textbf{2. Write a language-equivalent RA’s expression (cf. Definition 1, page 2).}
+
+\begin{lstlisting}
+σ (instructor.ID = teaches.ID) (instructor × teaches)
+\end{lstlisting}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1.0\textwidth]{fig/screenshots/Q15.png}
+    \caption{Screenshot for Question 15}
+\end{figure}
+
+\clearpage
+
+
+\section*{Question 16}
+
+\textbf{1. Write a language-equivalent query in SQL (cf. Definition 1, page 2).}
+
+\begin{lstlisting}
+SELECT name, title 
+FROM instructor 
+NATURAL JOIN teaches 
+NATURAL JOIN course;
+\end{lstlisting}
+
+\textbf{2. Write a language-equivalent RA’s expression (cf. Definition 1, page 2).}
+
+\begin{lstlisting}
+π(name, title) ((instructor ⨝ teaches) ⨝ course)
+\end{lstlisting}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1.0\textwidth]{fig/screenshots/Q16.png}
+    \caption{Screenshot for Question 16}
+\end{figure}
+
+\clearpage
+
+
+\section*{Question 17}
+
+\textbf{1. Write a language-equivalent query in SQL (cf. Definition 1, page 2).}
+
+\begin{lstlisting}
+SELECT COUNT(*) 
+FROM accident
+WHERE EXISTS (
+    SELECT * 
+    FROM participated AS P, owns, person
+    WHERE owns.P_driver_id = person.driver_id
+    AND person.name = 'John Smith'
+    AND owns.C_plate_num = P.C_plate_num
+    AND accident.report_num = P.A_report_num
+);
+\end{lstlisting}
+
+\textbf{2. Write a language-equivalent RA’s expression (cf. Definition 1, page 2).}
+
+\begin{lstlisting}
+π(report_num) (
+    σ(person.name = 'John Smith' ∧ owns.P_driver_id = person.driver_id 
+       ∧ owns.C_plate_num = participated.C_plate_num 
+       ∧ accident.report_num = participated.A_report_num) 
+    (accident ⨝ participated ⨝ owns ⨝ person)
+)
+\end{lstlisting}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1.0\textwidth]{fig/screenshots/Q17.png}
+    \caption{Screenshot for Question 17}
+\end{figure}
+
+\clearpage
+
+
+\section*{Question 18}
+
+\textbf{1. Write a language-equivalent query in SQL (cf. Definition 1, page 2).}
+
+\begin{lstlisting}
+SELECT ID, name
+FROM instructor
+WHERE ID NOT IN (
+    SELECT ID
+    FROM instructor NATURAL JOIN teaches
+);
+\end{lstlisting}
+
+\textbf{2. Write a language-equivalent RA’s expression (cf. Definition 1, page 2).}
+
+\begin{lstlisting}
+π(ID, name) (instructor) - π(ID) (instructor ⨝ teaches)
+\end{lstlisting}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1.0\textwidth]{fig/screenshots/Q18.png}
+    \caption{Screenshot for Question 18}
+\end{figure}
+
+\clearpage
+
+
+\section*{Question 19}
+
+\textbf{1. Write a language-equivalent query in SQL (cf. Definition 1, page 2).}
+
+\begin{lstlisting}
+SELECT course_id, title, dept_name
+FROM takes NATURAL JOIN course
+WHERE ID = 12345;
+\end{lstlisting}
+
+\textbf{2. Write a language-equivalent RA’s expression (cf. Definition 1, page 2).}
+
+\begin{lstlisting}
+π_course_id, title, dept_name (σ_ID = 12345 (takes ⨝ course))
+\end{lstlisting}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1.0\textwidth]{fig/screenshots/Q19.png}
+    \caption{Screenshot for Question 19}
+\end{figure}
+
+\clearpage
+
+
+\section*{Question 20}
+
+\textbf{1. Write a language-equivalent query in SQL (cf. Definition 1, page 2).}
+
+\begin{lstlisting}
+SELECT course_id, sec_id, semester, year, SUM(tot_cred)
+FROM takes NATURAL JOIN student
+WHERE year = 2021
+GROUP BY course_id, sec_id, semester, year;
+\end{lstlisting}
+
+\textbf{2. Write a language-equivalent RA’s expression (cf. Definition 1, page 2).}
+
+\begin{lstlisting}
+π_course_id, sec_id, semester, year, SUM(tot_cred) (σ_year=2021 (takes ⨝ student))
+\end{lstlisting}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1.0\textwidth]{fig/screenshots/Q20.png}
+    \caption{Screenshot for Question 20}
+\end{figure}
+
+\clearpage
+
+\section*{Question 21}
+
+\textbf{1. Write a language-equivalent query in SQL (cf. Definition 1, page 2).}
+
+\begin{lstlisting}
+SELECT course_id, semester, year, sec_id AS course_section, SUM(tot_cred) AS sum_tot_cred
+FROM takes NATURAL JOIN student
+WHERE year = 2021
+GROUP BY course_id, semester, year, sec_id
+HAVING COUNT(ID) <= 9
+LIMIT 25;
+\end{lstlisting}
+
+\textbf{2. Write a language-equivalent RA’s expression (cf. Definition 1, page 2).}
+
+\begin{lstlisting}
+π_course_id,semester,year,sec_id, SUM(tot_cred) (σ_year=2021 (takes ⨝ student))
+γ_course_id,semester,year,sec_id; SUM(tot_cred) (σ_year=2021 (takes ⨝ student)) σ_COUNT(ID) ≤ 9
+\end{lstlisting}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1.0\textwidth]{fig/screenshots/Q21.png}
+    \caption{Screenshot for Question 21}
+\end{figure}
+
+\clearpage
+
+\section*{Question 22}
+
+\textbf{1. Write a language-equivalent query in SQL (cf. Definition 1, page 2).}
+
+\begin{lstlisting}
+SELECT * 
+FROM student 
+CROSS JOIN takes
+WHERE name NOT IN ("Abelard", "Eloise");
+\end{lstlisting}
+
+\textbf{2. Write a language-equivalent RA’s expression (cf. Definition 1, page 2).}
+
+\begin{lstlisting}
+σ_name ∉ {"Abelard", "Eloise"} (student × takes)
+\end{lstlisting}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1.0\textwidth]{fig/screenshots/Q22.png}
+    \caption{Screenshot for Question 22}
+\end{figure}
+\clearpage
+
+\section*{ Question 23}
+SQL Query:
+\begin{lstlisting}
+SELECT *
+FROM student NATURAL JOIN takes
+WHERE name NOT IN ('Abelard','Eloise');
+\end{lstlisting}
+
+1. RA Expression:
+\begin{lstlisting}
+σ_(name≠'Abelard' ∧ name≠'Eloise')(student ⋈ takes)
+\end{lstlisting}
+
+2. TRC Expression:
+\begin{lstlisting}
+{t | ∃s∈student ∃k∈takes (
+   s.ID = k.ID ∧
+   s.name ≠ 'Abelard' ∧ s.name ≠ 'Eloise' ∧
+   t[*] = (s[*] ⋈ k[*])
+)}
+\end{lstlisting}
+
+3. DRC Expression:
+\begin{lstlisting}
+{<ID, name, dept_name, tot_cred, course_id, sec_id, semester, year, grade> |
+   ∃i,n,d,t,c,s,sem,y,g (
+   student(i,n,d,t) ∧ takes(i,c,s,sem,y,g) ∧
+   n ≠ 'Abelard' ∧ n ≠ 'Eloise')}
+\end{lstlisting}
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1.0\textwidth]{fig/23-45/23.png}
+    \caption{Screenshot for Question 23}
+\end{figure}
+\clearpage
+\section*{Question 24}
+SQL Query:
+\begin{lstlisting}
+SELECT *
+FROM student AS S JOIN takes AS T ON S.ID = T.ID
+WHERE name NOT IN ('Abelard','Eloise');
+\end{lstlisting}
+
+1. RA Expression:
+\begin{lstlisting}
+σ_(name≠'Abelard' ∧ name≠'Eloise')(student ⋈_(S.ID = T.ID) takes)
+
+\end{lstlisting}
+2. TRC Expression:
+\begin{lstlisting}
+{t | ∃s∈student ∃k∈takes (
+   s.ID = k.ID ∧
+   s.name ≠ 'Abelard' ∧ s.name ≠ 'Eloise' ∧
+   t[*] = (s[*], k[*])
+)}
+\end{lstlisting}
+
+3. DRC Expression:
+\begin{lstlisting}
+{<ID, name, dept_name, tot_cred, course_id, sec_id, semester, year, grade> |
+   ∃i,n,d,t,c,s,sem,y,g (
+   student(i,n,d,t) ∧ takes(i,c,s,sem,y,g) ∧
+   n ≠ 'Abelard' ∧ n ≠ 'Eloise')}
+\end{lstlisting}
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1.0\textwidth]{fig/23-45/24.png}
+    \caption{Screenshot for Question 24}
+\end{figure}
+\clearpage
+\section*{Question 25}
+SQL Query:
+\begin{lstlisting}
+SELECT *
+FROM student AS S NATURAL JOIN takes AS T
+WHERE name NOT IN ('Abelard','Eloise');
+
+
+--The error message states "Column 'course_id' in field list is ambiguous" (Error #1052). This occurs because course_id exists in both the teaches and course tables that you're joining, and MySQL doesn't know which table's course_id you want to select. Fixed SQL
+
+SELECT t.course_id, c.title
+FROM instructor NATURAL JOIN teaches t, course c
+WHERE course_id NOT IN ('3020', '2310') OR title = 'Database';
+
+\end{lstlisting}
+1. RA Expression:
+\begin{lstlisting}
+σ_(name≠'Abelard' ∧ name≠'Eloise')(student ⋈ takes)
+\end{lstlisting}
+
+2. TRC Expression:
+\begin{lstlisting}
+{t | ∃s∈student ∃k∈takes (
+   s.ID = k.ID ∧
+   s.name ≠ 'Abelard' ∧ s.name ≠ 'Eloise' ∧
+   t[*] = (s[*] ⋈ k[*])
+)}
+\end{lstlisting}
+
+3. DRC Expression:
+\begin{lstlisting}
+{<ID, name, dept_name, tot_cred, course_id, sec_id, semester, year, grade> |
+   ∃i,n,d,t,c,s,sem,y,g (
+   student(i,n,d,t) ∧ takes(i,c,s,sem,y,g) ∧
+   n ≠ 'Abelard' ∧ n ≠ 'Eloise')}
+\end{lstlisting}
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1.0\textwidth]{fig/23-45/25.png}
+    \caption{Screenshot for Question 25}
+\end{figure}
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1.0\textwidth]{fig/23-45/25-2.png}
+    \caption{Screenshot for Question 25-2}
+\end{figure}
+\clearpage
+\section*{Question 26}
+SQL Query:
+\begin{lstlisting}
+SELECT name,course_id
+FROM (SELECT * FROM takes
+WHERE year >= 2008) NATURAL JOIN student;
+\end{lstlisting}
+
+1. RA Expression:
+\begin{lstlisting}
+π_(name, course_id)(σ_(year≥2008)(takes) ⋈ student)
+\end{lstlisting}
+
+2. TRC Expression:
+\begin{lstlisting}
+{t(name, course_id) | ∃s∈student ∃k∈takes (
+   s.ID = k.ID ∧
+   k.year ≥ 2008 ∧
+   t.name = s.name ∧
+   t.course_id = k.course_id
+)}
+\end{lstlisting}
+
+3. DRC Expression:
+\begin{lstlisting}
+{<n,c> | ∃i,d,t,s,sem,y,g (
+   student(i,n,d,t) ∧ takes(i,c,s,sem,y,g) ∧
+   y ≥ 2008)}
+\end{lstlisting}
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1.0\textwidth]{fig/23-45/26.png}
+    \caption{Screenshot for Question 26}
+\end{figure}
+\clearpage
+\section*{Question 27}
+SQL Query:
+\begin{lstlisting}
+SELECT name,course_id
+FROM takes JOIN student USING (ID)
+WHERE EXISTS (SELECT * FROM takes
+WHERE year >= 2008);
+\end{lstlisting}
+
+1. RA Expression:
+\begin{lstlisting}
+π_(name, course_id)(σ_(∃t∈takes(t.year≥2008))(takes ⋈_(ID) student))
+
+\end{lstlisting}
+2. TRC Expression:
+\begin{lstlisting}
+{t(name, course_id) | ∃s∈student ∃k∈takes (
+   s.ID = k.ID ∧
+   ∃t∈takes(t.year ≥ 2008) ∧
+   t.name = s.name ∧
+   t.course_id = k.course_id
+)}
+\end{lstlisting}
+
+3. DRC Expression:
+\begin{lstlisting}
+{<n,c> | ∃i,d,t,s,sem,y,g,i2,c2,s2,sem2,y2,g2 (
+   student(i,n,d,t) ∧ takes(i,c,s,sem,y,g) ∧
+   takes(i2,c2,s2,sem2,y2,g2) ∧ y2 ≥ 2008)}
+
+\end{lstlisting}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1.0\textwidth]{fig/23-45/27.png}
+    \caption{Screenshot for Question 27}
+\end{figure}
+\clearpage
+\section*{Question 28}
+SQL Query:
+\begin{lstlisting}
+SELECT dept_name,AVG (salary) AS avg_salary
+FROM instructor
+GROUP BY dept_name
+HAVING avg_salary > 73000;
+
+\end{lstlisting}
+1. RA Expression:
+\begin{lstlisting}
+γ_(dept_name, avg_salary←AVG(salary))(σ_(avg_salary>73000)(instructor))
+
+\end{lstlisting}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1.0\textwidth]{fig/23-45/28.png}
+    \caption{Screenshot for Question 28}
+\end{figure}
+\clearpage
+\section*{Question 29}
+SQL Query:
+\begin{lstlisting}
+SELECT dept_name, avg_salary
+FROM (SELECT dept_name, AVG(salary) AS avg_salary
+FROM instructor GROUP BY dept_name)
+WHERE EXISTS (SELECT dept_name, AVG(salary) AS tmp_avg_salary
+FROM instructor
+GROUP BY dept_name
+HAVING tmp_avg_salary=avg_salary
+AND tmp_avg_salary > 73000);
+\end{lstlisting}
+
+1. RA Expression:
+\begin{lstlisting}
+π_(dept_name, avg_salary)(
+   γ_(dept_name, avg_salary←AVG(salary))(instructor) ⋈
+   σ_(tmp_avg_salary>73000)(γ_(dept_name, tmp_avg_salary←AVG(salary))(instructor))
+)
+\end{lstlisting}
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1.0\textwidth]{fig/23-45/29.png}
+    \caption{Screenshot for Question 29}
+\end{figure}
+\clearpage
+\section*{Question 30}
+SQL Query:
+\begin{lstlisting}
+(SELECT title
+FROM course
+WHERE dept_name in ('ComputerScience','History')
+EXCEPT
+(SELECT title
+FROM student NATURAL JOIN takes
+JOIN course USING (course_id)
+WHERE tot_cred >SOME (SELECT tot_cred
+FROM student
+WHERE dept_name = 'ComputerScience')));
+\end{lstlisting}
+
+1. RA Expression:
+\begin{lstlisting}
+π_title(σ_(dept_name='ComputerScience' ∨ dept_name='History')(course)) -
+π_title(σ_(tot_cred > ANY(π_tot_cred(σ_dept_name='ComputerScience'(student))))(
+   student ⋈ takes ⋈ course))
+\end{lstlisting}
+
+2. TRC Expression:
+\begin{lstlisting}
+{t(title) | ∃c∈course (
+   (c.dept_name = 'ComputerScience' ∨ c.dept_name = 'History') ∧
+   t.title = c.title ∧
+   ¬∃s∈student ∃k∈takes (
+      s.ID = k.ID ∧
+      k.course_id = c.course_id ∧
+      s.tot_cred > SOME(
+         SELECT tot_cred FROM student WHERE dept_name = 'ComputerScience'
+      )
+   )
+)}
+\end{lstlisting}
+
+3. DRC Expression:
+\begin{lstlisting}
+{<t> | ∃d,cid (
+   course(cid,t,d,_) ∧
+   (d = 'ComputerScience' ∨ d = 'History') ∧
+   ¬∃i,n,d2,tc (
+      student(i,n,d2,tc) ∧
+      ∃i2,n2,d3,tc2 (
+         student(i2,n2,d3,tc2) ∧
+         d3 = 'ComputerScience' ∧
+         tc > tc2
+      )
+   )
+)}
+\end{lstlisting}
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1.0\textwidth]{fig/23-45/30.png}
+    \caption{Screenshot for Question 30}
+\end{figure}
+\clearpage
+\section*{Question 31}
+SQL Query:
+\begin{lstlisting}
+SELECT ID, dept_name
+FROM takes NATURAL JOIN course
+WHERE ID = '12345' OR dept_name = 'CSE';
+\end{lstlisting}
+
+1. RA Expression:
+\begin{lstlisting}
+π_(ID, dept_name)(σ_(ID='12345' ∨ dept_name='CSE')(takes ⋈ course))
+
+\end{lstlisting}
+2. TRC Expression:
+\begin{lstlisting}
+{t(ID, dept_name) | ∃k∈takes ∃c∈course (
+   k.course_id = c.course_id ∧
+   (k.ID = '12345' ∨ c.dept_name = 'CSE') ∧
+   t.ID = k.ID ∧
+   t.dept_name = c.dept_name
+)}
+\end{lstlisting}
+
+3. DRC Expression:
+\begin{lstlisting}
+{<i,d> | ∃c,s,sem,y,g,t (
+   takes(i,c,s,sem,y,g) ∧ course(c,t,d,_) ∧
+   (i = '12345' ∨ d = 'CSE'))}
+
+\end{lstlisting}
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1.0\textwidth]{fig/23-45/31.png}
+    \caption{Screenshot for Question 31}
+\end{figure}
+\clearpage
+\section*{Question 32}
+SQL Query:
+\begin{lstlisting}
+SELECT course_id, title
+FROM student, takes NATURAL JOIN course
+WHERE course_id = '3020' AND title = 'Database';
+\end{lstlisting}
+
+1. RA Expression:
+\begin{lstlisting}
+π_(course_id, title)(σ_(course_id='3020' ∧ title='Database')(student × (takes ⋈ course)))
+
+\end{lstlisting}
+2. TRC Expression:
+\begin{lstlisting}
+{t(course_id, title) | ∃s∈student ∃k∈takes ∃c∈course (
+   k.course_id = c.course_id ∧
+   k.course_id = '3020' ∧
+   c.title = 'Database' ∧
+   t.course_id = k.course_id ∧
+   t.title = c.title
+)}
+
+\end{lstlisting}
+3. DRC Expression:
+\begin{lstlisting}
+{<c,t> | ∃i,n,d,tc,s,sem,y,g (
+   student(i,n,d,tc) ∧ takes(i,c,s,sem,y,g) ∧
+   course(c,t,_,_) ∧
+   c = '3020' ∧ t = 'Database')}
+\end{lstlisting}
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1.0\textwidth]{fig/23-45/32.png}
+    \caption{Screenshot for Question 32}
+\end{figure}
+\clearpage
+\section*{Question 33}
+SQL Query:
+\begin{lstlisting}
+SELECT course_id, title
+FROM instructor NATURAL JOIN teaches, course
+WHERE course_id NOT IN ('3020','2310') OR title = 'Database';
+
+\end{lstlisting}
+1. RA Expression:
+\begin{lstlisting}
+π_(course_id, title)(σ_(course_id∉{'3020','2310'} ∨ title='Database')((instructor ⋈ teaches) × course))
+
+\end{lstlisting}
+2. TRC Expression:
+\begin{lstlisting}
+{t(course_id, title) | ∃i∈instructor ∃te∈teaches ∃c∈course (
+   i.ID = te.ID ∧
+   (te.course_id ∉ {'3020','2310'} ∨ c.title = 'Database') ∧
+   t.course_id = te.course_id ∧
+   t.title = c.title
+)}
+\end{lstlisting}
+
+3. DRC Expression:
+\begin{lstlisting}
+{<c,t> | ∃i,n,d,s,sid,sem,y (
+   instructor(i,n,d,s) ∧ teaches(i,c,sid,sem,y) ∧
+   course(c,t,_,_) ∧
+   (c ≠ '3020' ∧ c ≠ '2310' ∨ t = 'Database'))}
+\end{lstlisting}
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1.0\textwidth]{fig/23-45/33.png}
+    \caption{Screenshot for Question 33}
+\end{figure}
+\clearpage
+\section*{Question 34}
+SQL Query:
+\begin{lstlisting}
+SELECT *
+FROM instructor NATURAL JOIN teaches AS T
+JOIN course AS C ON T.course_id = C.course_id
+WHERE C.course_id NOT IN ('3020','2310') OR title = 'Database';
+\end{lstlisting}
+
+1. RA Expression:
+\begin{lstlisting}
+σ_(course_id∉{'3020','2310'} ∨ title='Database')(instructor ⋈ teaches ⋈_(T.course_id = C.course_id) course)
+\end{lstlisting}
+
+2. TRC Expression:
+\begin{lstlisting}
+{t | ∃i∈instructor ∃te∈teaches ∃c∈course (
+   i.ID = te.ID ∧
+   te.course_id = c.course_id ∧
+   (c.course_id ∉ {'3020','2310'} ∨ c.title = 'Database') ∧
+   t[*] = (i[*] ⋈ te[*] ⋈ c[*])
+)}
+\end{lstlisting}
+
+3. DRC Expression:
+\begin{lstlisting}
+{<i,n,d,s,c,sid,sem,y,t,dp,cr> | 
+   instructor(i,n,d,s) ∧ teaches(i,c,sid,sem,y) ∧
+   course(c,t,dp,cr) ∧
+   (c ≠ '3020' ∧ c ≠ '2310' ∨ t = 'Database')}
+
+\end{lstlisting}
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1.0\textwidth]{fig/23-45/34.png}
+    \caption{Screenshot for Question 34}
+\end{figure}
+\clearpage
+\section*{Question 35}
+SQL Query:
+\begin{lstlisting}
+SELECT SUM(credits) AS sumC,ID
+FROM takes AS T NATURAL JOIN course
+GROUP BY T.ID;
+\end{lstlisting}
+
+1. RA Expression:
+\begin{lstlisting}
+γ_(ID, sumC←SUM(credits))(takes ⋈ course)
+
+\end{lstlisting}
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1.0\textwidth]{fig/23-45/35.png}
+    \caption{Screenshot for Question 35}
+\end{figure}
+\clearpage
+\section{3 Translate from RA or ERA}
+\section*{Question 36}
+RA Expression:
+\begin{lstlisting}
+Πname(σdept_name='Comp.Sci′ ∧ salary>70000(instructor))
+
+
+SQL Translation:
+\begin{lstlisting}
+SELECT name
+FROM instructor
+WHERE dept_name = 'Comp.Sci' AND salary > 70000;
+
+\end{lstlisting}
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1.0\textwidth]{fig/23-45/36.png}
+    \caption{Screenshot for Question 36}
+\end{figure}
+\clearpage
+\section*{Question 37}
+RA Expressions:
+\begin{lstlisting}
+s ← instructor × department
+t ← σinstructor.dept_name=department.dept_name(s)
+Πname,dept_name,building(t)
+
+\end{lstlisting}
+SQL Translation:
+\begin{lstlisting}
+SELECT name, instructor.dept_name, building
+FROM instructor, department
+WHERE instructor.dept_name = department.dept_name;
+\end{lstlisting}
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1.0\textwidth]{fig/23-45/37.png}
+    \caption{Screenshot for Question 37}
+\end{figure}
+\clearpage
+\section*{Question 38}
+RA Expressions:
+\begin{lstlisting}
+s ← instructor × teaches
+Πname,course_id(σinstructor.ID=teaches.ID(s))
+
+\end{lstlisting}
+SQL Translation:
+\begin{lstlisting}
+SELECT name, course_id
+FROM instructor, teaches
+WHERE instructor.ID = teaches.ID;
+\end{lstlisting}
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1.0\textwidth]{fig/23-45/38.png}
+    \caption{Screenshot for Question 38}
+\end{figure}
+\clearpage
+\section*{Question 39}
+RA Expressions:
+\begin{lstlisting}
+s ← (instructor + teaches) × course
+Πname,title(σteaches.course_id=course.course_id(s))
+\end{lstlisting}
+
+SQL Translation:
+\begin{lstlisting}
+SELECT name, title
+FROM instructor 
+JOIN teaches ON instructor.ID = teaches.ID
+JOIN course ON teaches.course_id = course.course_id;
+\end{lstlisting}
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1.0\textwidth]{fig/23-45/39.png}
+    \caption{Screenshot for Question 39}
+\end{figure}
+\clearpage
+\section*{Question 40}
+
+RA Expressions:
+\begin{lstlisting}
+s ← (instructor + ρT (teaches) ) × ρC(course)
+Πname,title(σT.course_id=C.course_id(s))
+\end{lstlisting}
+
+SQL Translation:
+\begin{lstlisting}
+SELECT name, title
+FROM instructor 
+JOIN teaches AS T ON instructor.ID = T.ID
+JOIN course AS C ON T.course_id = C.course_id;
+
+--The original query had several issues: The subquery (SELECT * FROM takes) wasn't properly constructed, The placement of the NATURAL JOIN was incorrect, The LIMIT clause was misplaced
+--Fixed sql:
+
+SELECT name, course_id 
+FROM takes 
+NATURAL JOIN student 
+WHERE year >= 2008;
+\end{lstlisting}
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1.0\textwidth]{fig/23-45/40.png}
+    \caption{Screenshot for Question 40}
+\end{figure}
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1.0\textwidth]{fig/23-45/40-2.png}
+    \caption{Screenshot for Question 40-2}
+\end{figure}
+\clearpage
+\section*{Question 41}
+RA Expressions:
+\begin{lstlisting}
+s ← instructor + (teaches × course)
+Πname,title(σteaches.course_id=course.course_id(s))
+\end{lstlisting}
+
+SQL Translation:
+\begin{lstlisting}
+SELECT DISTINCT name, title
+FROM instructor, teaches, course
+WHERE instructor.ID = teaches.ID 
+AND teaches.course_id = course.course_id;
+\end{lstlisting}
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1.0\textwidth]{fig/23-45/41.png}
+    \caption{Screenshot for Question 41}
+\end{figure}
+\clearpage
+\section*{Question 42}
+RA Expressions:
+\begin{lstlisting}
+s ← ρT (takes) + course
+Πcourse_id,title(σID=′12345′(s))
+\end{lstlisting}
+
+SQL Translation:
+\begin{lstlisting}
+SELECT course_id, title
+FROM takes AS T JOIN course USING (course_id)
+WHERE ID = '12345';
+\end{lstlisting}
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1.0\textwidth]{fig/23-45/42.png}
+    \caption{Screenshot for Question 42}
+\end{figure}
+\clearpage
+\section*{Question 43}
+RA Expressions:
+\begin{lstlisting}
+s ← ρT(ID,course_id,sec_id,semester,year,grade)(takes)
+t ← s1course
+Πcourse_id,title(σID='12345′(t)
+
+\end{lstlisting}
+SQL Translation:
+\begin{lstlisting}
+SELECT course_id, title
+FROM takes T NATURAL JOIN course
+WHERE ID = '12345';
+
+-- The issues in the original query were, Incorrect structure of the EXISTS subquery, Multiple FROM instructor clauses that weren't properly connected, Incorrect placement of the GROUP BY and HAVING clauses
+--Fixed Version:
+
+SELECT dept_name, avg_salary
+FROM (
+    SELECT dept_name, AVG(salary) AS avg_salary
+    FROM instructor
+    GROUP BY dept_name
+) AS dept_averages
+WHERE EXISTS (
+    SELECT 1 
+    FROM instructor i2 
+    GROUP BY i2.dept_name 
+    HAVING i2.dept_name = dept_averages.dept_name 
+    AND AVG(i2.salary) > 73000
+);
+\end{lstlisting}
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1.0\textwidth]{fig/23-45/43.png}
+    \caption{Screenshot for Question 43}
+\end{figure}
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1.0\textwidth]{fig/23-45/43-2.png}
+    \caption{Screenshot for Question 43-2}
+\end{figure}
+\clearpage
+\section*{Question 44}
+RA Expressions:
+\begin{lstlisting}
+s ← ρT(ID,course_id,sec_id,semester,year,grade)(takes)
+t ← s1course
+σID='12345′(ΠID,title(t))
+\end{lstlisting}
+
+SQL Translation:
+\begin{lstlisting}
+SELECT ID, title
+FROM takes NATURAL JOIN course
+WHERE ID = '12345';
+\end{lstlisting}
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1.0\textwidth]{fig/23-45/44.png}
+    \caption{Screenshot for Question 44}
+\end{figure}
+\clearpage
+\section*{Question 45}
+RA Expression:
+\begin{lstlisting}
+σyear≤2010∨ name=′Abc′( ρT (takes) + student)
+\end{lstlisting}
+
+SQL Translation:
+\begin{lstlisting}
+SELECT *
+FROM takes AS T JOIN student
+WHERE year <= 2010 OR name = 'Abc';
+\end{lstlisting}
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1.0\textwidth]{fig/23-45/45.png}
+    \caption{Screenshot for Question 45}
+\end{figure}
+\clearpage
+
+
+
+ \section*{Question 48}
+	RA expression:
+    \begin{lstlisting}
+    	s ← student ⋈ (student.ID = takes.ID) takes
+	Π name,course_id (s)
+     \end{lstlisting}
+
+	1.Write a language-equivalent query in SQL standard
+	SQL query:
+    \begin{lstlisting}
+	SELECT student.name, takes.course_id 
+	FROM student JOIN takes 
+	ON student.ID = takes.ID;
+     \end{lstlisting}
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1.0\textwidth]{fig/screenshots_48-68/task_3-ex_48_query.png}
+    \caption{Screenshot for Question 48}
+\end{figure}
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1.0\textwidth]{fig/screenshots_48-68/task_3-ex_48_output.png}
+    \caption{Screenshot for Question 48 output}
+\end{figure}
+\clearpage
+\section*{Question 49}
+	RA expression:
+    \begin{lstlisting}
+	s ← ρT (instructor) × ρS (instructor)
+	t ← σT.salary<S.salary ∧ S.dept_name='Biology' (s)
+	Π T.salary (t)
+     \end{lstlisting}
+
+	1.Write a language-equivalent query in SQL standard	
+	SQL query:
+    \begin{lstlisting}
+	SELECT T.salary
+	FROM instructor AS T, instructor AS S
+	WHERE T.salary < S.salary
+  	AND S.dept_name = 'Biology';
+     \end{lstlisting}
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1.0\textwidth]{fig/screenshots_48-68/task_3-ex_49_query.png}
+    \caption{Screenshot for Question 49}
+\end{figure}
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1.0\textwidth]{fig/screenshots_48-68/task_3-ex_49_output.png}
+    \caption{Screenshot for Question 49 output}
+\end{figure}
+\clearpage
+\section*{Question 50}	
+	RA expression:
+    \begin{lstlisting}
+	T.ID GρsumC (sum(credits)) (ΠID,credits (ρT (takes) ▷◁ course)))
+     \end{lstlisting}
+
+	1.Write a language-equivalent query in SQL standard
+	SQL query:
+    \begin{lstlisting}
+	SELECT T.ID, SUM(course.credits) AS sumC
+	FROM takes AS T
+	JOIN course
+	ON T.course_id = course.course_id
+	GROUP BY T.ID;
+ \end{lstlisting}
+\clearpage
+\section*{Question 51}
+	RA expression:
+    \begin{lstlisting}
+	Πname,course_id (ρT (σyear>=2008 (takes) ▷◁ student))
+	 \end{lstlisting}
+
+	1.Write a language-equivalent query in SQL standard
+	SQL query:
+    \begin{lstlisting}
+	SELECT name, course_id
+	FROM (
+    		SELECT *
+    		FROM takes NATURAL JOIN student
+    		WHERE year >= 2008
+	) AS T
+ \end{lstlisting}
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1.0\textwidth]{fig/screenshots_48-68/task_3- ex_51_output.png}
+    \caption{Screenshot for Question 51}
+\end{figure}
+\clearpage
+\section{4. Translate from TRC} 
+\section*{Question 52} 
+	TRC expression:
+    \begin{lstlisting}
+	{t | ∃s ∈ instructor (t[name] = s[name] ∧ s[salary] > 70000)}
+     \end{lstlisting}
+
+	1.Write a language-equivalent query in SQL standard
+	SQL query:
+    \begin{lstlisting}
+	SELECT DISTINCT name
+	FROM instructor
+	WHERE salary > 70000;
+     \end{lstlisting}
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1.0\textwidth]{fig/screenshots_48-68/task_4-ex_52_output.png}
+    \caption{Screenshot for Question 52 output}
+\end{figure}
+\clearpage
+\section*{Question 53} 
+	TRC expression:
+    \begin{lstlisting}
+	{t | ∃ I ∈ instructor (t[name] = I[name] ∧ I[salary] > 70000)}
+     \end{lstlisting}
+
+	1.Write a language-equivalent query in SQL standard
+	SQL query:
+    \begin{lstlisting}
+	SELECT I.name, I.salary
+	FROM instructor AS I
+	WHERE I.salary<70000
+     \end{lstlisting}
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1.0\textwidth]{fig/screenshots_48-68/task_4-ex_53_output.png}
+    \caption{Screenshot for Question 53 output}
+\end{figure}
+\clearpage
+\section*{Question 54} 
+	TRC expression:
+    \begin{lstlisting}
+	{t | ∃s ∈ instructor (t[name] = s[name] ∧ t[ID] = s[ID] ∧ s[salary] > 70000)}
+     \end{lstlisting}
+
+	1.Write a language-equivalent query in SQL standard
+	SQL query:
+    \begin{lstlisting}
+	SELECT DISTINCT name, ID
+	FROM instructor
+	WHERE salary > 70000;
+     \end{lstlisting}
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1.0\textwidth]{fig/screenshots_48-68/task_4-ex_54_query.png}
+    \caption{Screenshot for Question 54}
+\end{figure}
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1.0\textwidth]{fig/screenshots_48-68/task_4-ex_54_output.png}
+    \caption{Screenshot for Question 54 output}
+\end{figure}
+\clearpage
+\section*{Question 55} 
+	TRC expression:
+    \begin{lstlisting}
+	{t | ∃I ∈ instructor (t[name] = I[name] ∧ t[dept_name] = I[dept_name]
+		∧ ∃D ∈ department (t[building] = D[building]
+		∧ I[dept_name] = D[dept_name]))}	
+         \end{lstlisting}
+
+	1.Write a language-equivalent query in SQL standard
+	SQL query:
+    \begin{lstlisting}
+	SELECT I.name, I.dept_name, D.dept_name
+	FROM instructor AS I JOIN department AS D 
+	USING(dept_name)
+     \end{lstlisting}
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1.0\textwidth]{fig/screenshots_48-68/task_4-ex_55_query.png}
+    \caption{Screenshot for Question 55}
+\end{figure}
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1.0\textwidth]{fig/screenshots_48-68/task_4-ex_55_output.png}
+    \caption{Screenshot for Question 55 output}
+\end{figure}
+\clearpage
+\section*{Question 56} 
+	TRC expression:
+    \begin{lstlisting}
+	{⟨I, D⟩ | I ∈ instructor ∧ D ∈ department}
+     \end{lstlisting}
+
+	1.Write a language-equivalent query in SQL standard
+	SQL query:
+    \begin{lstlisting}
+	SELECT *
+	FROM instructor AS I , department AS D
+     \end{lstlisting}
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1.0\textwidth]{fig/screenshots_48-68/task_4-ex_56_query.png}
+    \caption{Screenshot for Question 56}
+\end{figure}
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1.0\textwidth]{fig/screenshots_48-68/task_4-ex_56_output.png}
+    \caption{Screenshot for Question 46 output}
+\end{figure}
+\clearpage
+\section*{Question 57} 
+	TRC expression:
+    \begin{lstlisting}
+	{t | ∃ i ∈ instructor∃d ∈ department (t[ID] = i[ID] ∧ t[name] = i[name]
+		∧ t[i.dept_name] = i[dept_name] ∧ t[salary] = i[salary]
+		∧ t[d.dept_name] = d[dept_name] ∧ t[building] = d[building] 
+		∧ t[budget] = d[budget])}
+ \end{lstlisting}
+
+	1.Write a language-equivalent query in SQL standard
+	\begin{lstlisting}
+	SELECT  *
+	FROM instructor, department
+     \end{lstlisting}
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1.0\textwidth]{fig/screenshots_48-68/task_4-ex_57_query.png}
+    \caption{Screenshot for Question 57}
+\end{figure}
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1.0\textwidth]{fig/screenshots_48-68/task_4-ex_57_output.png}
+    \caption{Screenshot for Question 57 output}
+\end{figure}
+\clearpage
+\section*{Question 58} 
+	TRC expression:
+    \begin{lstlisting}
+	{t | ∃I ∈ instructor∃D ∈ department (t[ID] = I[ID] ∧ t[name] = I[name]
+		∧ t[dept_name] = I[dept_name] ∧ t[salary] = I[salary]
+		∧ t[building] = D[building] ∧ t[budget] = D[budget])}
+         \end{lstlisting}
+
+	1.Write a language-equivalent query in SQL standard
+	SQL query:
+    \begin{lstlisting}
+	SELECT I.ID, I.name, I.dept_name, I.salary, D.building, D.budget
+	FROM instructor AS I, department AS D
+ \end{lstlisting}
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1.0\textwidth]{fig/screenshots_48-68/task_4-ex_58_query.png}
+    \caption{Screenshot for Question 58}
+\end{figure}
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1.0\textwidth]{fig/screenshots_48-68/task_4-ex_58_output.png}
+    \caption{Screenshot for Question 58 output}
+\end{figure}
+\clearpage
+\section*{Question 59} 
+	TRC expression:
+    \begin{lstlisting}
+	Q = {t | ∃i ∈ instructor ∃te ∈ teaches (t[ID] = i[ID] ∧ i[ID] = te[ID])}
+	{t | ∃i ∈ instructor (t[ID] = i[ID] ∧ ... ∧ ∀q ∈ Q (i[ID] ̸= q[ID]))}
+     \end{lstlisting}
+
+	1.Write a language-equivalent query in SQL standard
+	SQL query:
+    \begin{lstlisting}
+	SELECT ID, name, dept_name, salary
+	FROM instructor
+	WHERE ID NOT IN (
+    		SELECT ID
+    		FROM teaches
+	);
+ \end{lstlisting}
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1.0\textwidth]{fig/screenshots_48-68/task_4-ex_59_query.png}
+    \caption{Screenshot for Question 59}
+\end{figure}
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1.0\textwidth]{fig/screenshots_48-68/task_4-ex_59_output.png}
+    \caption{Screenshot for Question 59 output}
+\end{figure}
+\clearpage
+\section*{Question 60} 
+	TRC expression:
+    \begin{lstlisting}
+	Q1 = {t | ∃i ∈ instructor ∃te ∈ teaches (t[ID] = i[ID] ∧ ... ∧ t[salary] = i[salary]
+		∧ t[course_id] = te[course_id] ∧ ... ∧ t[year] = te[year]) ∧ i[ID] = te[ID])}
+	Q2 = {t | ∃q ∈ Q1 (t[ID] = q[ID])}
+	{t | ∃i ∈ instructor (t[ID] = i[ID] ∧ ∀q ∈ Q2 (i[ID] ≠ q[ID]))}
+     \end{lstlisting}
+
+	1.Write a language-equivalent query in SQL standard
+	SQL query:
+    \begin{lstlisting}
+	SELECT ID
+	FROM instructor 
+	WHERE ID NOT IN (
+		SELECT ID
+		FROM (
+			SELECT *
+			FROM instructor JOIN teaches 
+			USING(ID)
+		)   AS Q1
+	) ;
+     \end{lstlisting}
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1.0\textwidth]{fig/screenshots_48-68/task_4-ex_60_query.png}
+    \caption{Screenshot for Question 60}
+\end{figure}
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1.0\textwidth]{fig/screenshots_48-68/task_4-ex_60_output.png}
+    \caption{Screenshot for Question 60 output}
+\end{figure}
+\clearpage
+\section*{Question 61} 
+	TRC expression: 
+    \begin{lstlisting}
+	{t | ∃i ∈ takes, ∃s ∈ student(i[ID] = s[ID] ∧ t[name] = s[name]
+		∧ t[course_id] = i[course_id] ∧ i[year] >= 2008)}
+         \end{lstlisting}
+
+	1. Write a language-equivalent query in SQL standard
+	SQL query
+    \begin{lstlisting}
+	SELECT name, course_id
+	FROM takes JOIN student 
+	USING(ID)
+	WHERE year >=2008;
+ \end{lstlisting}
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1.0\textwidth]{fig/screenshots_48-68/task_4-ex_61_query.png}
+    \caption{Screenshot for Question 61}
+\end{figure}
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1.0\textwidth]{fig/screenshots_48-68/task_4-ex_61_output.png}
+    \caption{Screenshot for Question 61 output}
+\end{figure}
+\clearpage
+\section{5. Translate from DRC}
+\section*{Question 62} 
+	DRC expression:
+    \begin{lstlisting}
+	{⟨i, n, d, s, de, b, bg⟩ | ⟨i, n, d, s⟩ ∈ instructor ∧ ⟨de, b, bg⟩ ∈ department}
+     \end{lstlisting}
+
+	1. Write a language-equivalent query in SQL standard
+	SQL query:
+    \begin{lstlisting}
+	SELECT *
+	FROM instructor, department
+     \end{lstlisting}
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1.0\textwidth]{fig/screenshots_48-68/task_5-ex_62_query.png}
+    \caption{Screenshot for Question 62}
+\end{figure}
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1.0\textwidth]{fig/screenshots_48-68/task_5-ex_62_output.png}
+    \caption{Screenshot for Question 62 output}
+\end{figure}
+\clearpage
+\section*{Question 63} 
+	DRC expression:
+    \begin{lstlisting}
+	I = {⟨i, n, d, s⟩ | ⟨i, n, d, s⟩ ∈ instructor}
+	D = {⟨d, b, bg⟩ | ⟨d, b, bg⟩ ∈ department}
+	{⟨i, n, d, s, de, b, bg⟩ | ⟨i, n, d, s⟩ ∈ I ∧ ⟨de, b, bg⟩ ∈ D}
+     \end{lstlisting}
+
+	1. Write a language-equivalent query in SQL standard
+	SQL query:
+    \begin{lstlisting}
+	SELECT *
+	FROM instructor AS I, department AS D
+     \end{lstlisting}
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1.0\textwidth]{fig/screenshots_48-68/task_5-ex_62_query.png}
+    \caption{Screenshot for Question 62}
+\end{figure}
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1.0\textwidth]{fig/screenshots_48-68/task_5-ex_62_output.png}
+    \caption{Screenshot for Question 62 output}
+\end{figure}
+\clearpage
+\section*{Question 64} 
+	DRC expression:
+    \begin{lstlisting}
+	{⟨i, n, d, s, b, bg⟩ | ⟨i, n, d, s⟩ ∈ instructor ∧ ⟨de, b, bg⟩ ∈ department
+		∧ d = de}
+         \end{lstlisting}
+
+	1. Write a language-equivalent query in SQL standard
+    \begin{lstlisting}
+	SELECT I.*, D.building, D.budget
+	FROM instructor AS I JOIN department AS D 
+	USING(dept_name)
+     \end{lstlisting}
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1.0\textwidth]{fig/screenshots_48-68/task_5-ex_64_query.png}
+    \caption{Screenshot for Question 64}
+\end{figure}
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1.0\textwidth]{fig/screenshots_48-68/task_5-ex_64_output.png}
+    \caption{Screenshot for Question 64 output}
+\end{figure}
+\clearpage
+\section*{Question 65} 
+	DRC expression:
+    \begin{lstlisting}
+	{⟨c⟩ | ∃a, s, y, b, r, t (⟨c, a, s, y, b, r, t⟩ ∈ section
+		∧ (s = ‘Fall′ ∧ y = 2009) ∨ (s =′ Spring ′ ∧ y = 2010))}
+         \end{lstlisting}
+
+	1. Write a language-equivalent query in SQL standard
+	SQL query:
+    \begin{lstlisting}
+	SELECT course_id
+	FROM section
+	WHERE (semester = 'Fall' AND year = 2009) 
+	OR (semester = 'Spring' AND year = 2010);
+     \end{lstlisting}
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1.0\textwidth]{fig/screenshots_48-68/task_5-ex_65_query.png}
+    \caption{Screenshot for Question 65}
+\end{figure}
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1.0\textwidth]{fig/screenshots_48-68/task_5-ex_65_output.png}
+    \caption{Screenshot for Question 65 output}
+\end{figure}
+\clearpage
+\section*{Question 66} 
+	TRC expression:
+    \begin{lstlisting}
+	{⟨n⟩ | ∃i, d, s (⟨i, n, d, s⟩ ∈ instructor
+		∧ ∃b, g (⟨d, b, g⟩ ∈ department ∧ b =′Watson′ ))}
+         \end{lstlisting}
+
+	1. Write a language-equivalent query in SQL standard
+	SQL query:
+    \begin{lstlisting}
+	SELECT name 
+	FROM instructor JOIN department USING(dept_name)
+	WHERE building = 'Watson';
+     \end{lstlisting}
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1.0\textwidth]{fig/screenshots_48-68/task_5-ex_66_query.png}
+    \caption{Screenshot for Question 66}
+\end{figure}
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1.0\textwidth]{fig/screenshots_48-68/task_5-ex_66_output.png}
+    \caption{Screenshot for Question 66 output}
+\end{figure}
+\clearpage
+\section*{Question 67}
+	DRC expression:
+    \begin{lstlisting}
+	{⟨d⟩ | ∃i, n, s (⟨i, n, d, s⟩ ∈ instructor ∧ n = ‘Eloise′ ∨ ¬ (s = 80000))}
+     \end{lstlisting}
+
+	1. Write a language-equivalent query in SQL standard
+    \begin{lstlisting}
+	SELECT dept_name
+	FROM instructor 
+	WHERE name=’Eloise’ OR salary != 80000
+     \end{lstlisting}
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1.0\textwidth]{fig/screenshots_48-68/task_5-ex_67_query.png}
+    \caption{Screenshot for Question 67}
+\end{figure}
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1.0\textwidth]{fig/screenshots_48-68/task_5-ex_67_output.png}
+    \caption{Screenshot for Question 67 output}
+\end{figure}
+\clearpage
+\section*{Question 68} 
+	DRC expression:
+    \begin{lstlisting}
+	{< n, cid >| ∃ id, dn, tc, sid, s, y, g (< id, n, dn, tc >∈ student
+		∧ < id, cid, sid, s, y, g >∈takes ∧ y >= 2008)}
+        end{lstlisting}
+	1. Write a language-equivalent query in SQL standard
+	SQL query:
+    \begin{lstlisting}
+	SELECT name, course_id
+	FROM student JOIN takes USING (ID)
+	WHERE year>=2008 
+  \end{lstlisting}
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1.0\textwidth]{fig/screenshots_48-68/task_5-ex_68_query.png}
+    \caption{Screenshot for Question 68}
+\end{figure}
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1.0\textwidth]{fig/screenshots_48-68/task_5-ex_68_output.png}
+    \caption{Screenshot for Question 68 output}
+\end{figure}
+\clearpage
+\end{document}
+

@@ -1,0 +1,1 @@
+cmd_/home/javohir/hw3/4/osha_team.ko := ld -r  -m elf_x86_64 -z noexecstack   --build-id=sha1  -T scripts/module.lds -o /home/javohir/hw3/4/osha_team.ko /home/javohir/hw3/4/osha_team.o /home/javohir/hw3/4/osha_team.mod.o;  true

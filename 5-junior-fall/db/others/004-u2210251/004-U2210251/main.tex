@@ -1,0 +1,871 @@
+\documentclass[12pt]{article}
+%\RequirePackage[2020-02-02]{latexrelease}
+\usepackage[T1]{fontenc}
+\usepackage[utf8x]{inputenc}  
+\usepackage[english]{babel}
+\usepackage{times}  % Times Roman font
+%\usepackage{helvet} % Helvetica font
+%\renewcommand{\familydefault}{\sfdefault} % font
+\usepackage{graphicx} % se uso picture with pdflatex
+\usepackage[pdftex]{hyperref} % To enable hyperlinks with pdflatex
+\usepackage{tikz}  % used ALSO for positioning of logo 
+\usepackage{abstract}
+\usepackage{listings}  % needed to write SQL - see next
+\usepackage{float}
+\usepackage{xcolor}  % To enable color
+% NB: Every team can adapt the setting of their SQL code
+% by changing the parameters in their \lstset - here's a default:
+\lstset{
+    language=SQL,  % Language is SQL
+    basicstyle=\normalfont\bfseries,  % Normal font with bold
+    keywordstyle=\color{blue},  % Keywords in blue
+    backgroundcolor=\color{gray},  % Background color (define backcolour elsewhere)
+    belowskip=3mm,  % Space below each code block
+    breakatwhitespace=true,  % Break lines at whitespace
+    breaklines=true,  % Enable line breaks
+    classoffset=0,  % Class offset for formatting
+    columns=flexible,  % Flexible column width
+    commentstyle=\color{yellow},  % Comments in dark green
+    framexleftmargin=0.25em,  % Left margin for the frame
+    numbers=none,  % No line numbers (set `numbers=left` if needed)
+    numberstyle=\tiny\color{gray},  % Style for line numbers if enabled
+    showstringspaces=false,  % Do not show spaces in strings
+    stringstyle=\color{orange},  % Strings in mauve color
+    tabsize=3,  % Set tab size to 3
+    xleftmargin=1em  % Left margin for code blocks
+}
+
+%%% FORMATTING / MARGINS %%%
+\setlength{\oddsidemargin}{0.05in}  % Left margin for odd pages
+\setlength{\evensidemargin}{0.05in}  % Left margin for even pages
+\setlength{\textwidth}{6.2in}  % Text width
+\setlength{\textheight}{9.20in}  % Text height
+\setlength{\topmargin}{-0.35in}  % Top margin
+
+%% Uncomment and modify the following if needed:
+%% \evensidemargin 36pt\oddsidemargin 36pt\textwidth 5.4in
+%% \topmargin 0pt \addtolength{\textheight}{1.0in}
+
+%%%%%%%%%%%%   MACROS AND PACKAGES SPECIFIC TO **YOUR** HOMEWORK  %%%%%%%%%%%%%%
+%%%%%%%%%
+%%%%%%%%%
+%%%%%%%%%
+
+% TO DO: Add any specific macros or package configurations here
+
+%%%%%%%%%
+%%%%%%%%%
+%%%%%%%%%
+%%%%%%%%%%%% END MACROS SPECIFIC TO THIS DOCUMENT %%%%%%%%%%%%%%%
+
+\includeonly{}
+
+
+\begin{document}
+
+%\noindent\rule{\textwidth}{1pt}  % Uncomment if you need a rule at the top
+%\pagenumbering{roman}  % Uncomment for Roman page numbers (e.g., i, ii, iii)
+%\pagestyle{plain}  % Use plain page style
+\thispagestyle{empty}  % First page with no page number
+\input{DB-HW2cover}  % Your cover page input
+
+\begingroup
+\hypersetup{linkcolor=black}  % Link color for the document (use black for consistency)
+
+%\hypersetup{linkcolor=blue}  % Uncomment if you want links to be blue
+
+\bibliographystyle{plain}  % Set bibliography style
+%\bibliographystyle{abbrv}  % Use abbreviated style (optional)
+
+\pagenumbering{arabic}  % Use Arabic page numbering
+\setcounter{page}{1}  % Start page numbering from 1
+\pagestyle{plain}  % Plain page style
+
+\newpage  % New page
+\section{1st section}
+
+\begin{lstlisting}
+DELETE FROM instructor WHERE dept_name IN (SELECT dept_name FROM department WHERE building = 'Watson'); 
+-- W5P13
+\end{lstlisting}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1.0\textwidth]{fig/screenshots/w5_p13.eps}
+\end{figure}
+
+\begin{lstlisting}
+
+INSERT INTO course VALUES ('CS-437', 'Database Systems', 'Comp. Sci.',4); 
+-- W5P15
+\end{lstlisting}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1.0\textwidth]{fig/screenshots/w5_p15.eps}
+\end{figure}
+
+\begin{lstlisting}
+
+INSERT INTO instructor SELECT ID, name, dept_name, 20000 FROM student WHERE dept_name = 'Comp.Sci' AND tot_cred > 145;
+-- W5P17
+\end{lstlisting}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1.0\textwidth]{fig/screenshots/w5_p17.eps}
+\end{figure}
+\newpage
+\begin{lstlisting}
+
+UPDATE instructor SET salary = salary * 1.03 WHERE salary > 100000;
+UPDATE instructor SET salary = salary * 1.05 WHERE salary <<= 100000; 
+-- W5P19
+\end{lstlisting}
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1.0\textwidth]{fig/screenshots/w5_p19.eps}
+\end{figure}
+
+\begin{lstlisting}
+
+UPDATE instructor SET salary = case WHEN salary <= 100000 THEN salary salary* 1.03 END;
+* 1.05 ELSE 
+-- W5P20
+\end{lstlisting}
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1.0\textwidth]{fig/screenshots/w5_p20.eps}
+\end{figure}
+\newpage
+
+\begin{lstlisting}
+
+UPDATE student S SET tot_cred = (SELECT SUM(credits) FROM takes, course WHERE takes.course_id = course.course_id AND S.ID = takes.ID AND takes.grade <> 'F' AND takes.grade IS NOT NULL); 
+-- W5P21
+\end{lstlisting}
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1.0\textwidth]{fig/screenshots/w5_p21.eps}
+\end{figure}
+
+
+\begin{lstlisting}
+
+SELECT name, title FROM instructor NATURAL JOIN teaches, course WHERE
+teaches.course_id = course.course_id; 
+-- W6P9
+\end{lstlisting}
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1.0\textwidth]{fig/screenshots/w6_p9.eps}
+\end{figure}
+
+
+\begin{lstlisting}
+
+SELECT FROM instructor NATURAL JOIN teaches, course WHERE teaches.course_id=course.course_id; 
+-- W6P10
+\end{lstlisting}
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1.0\textwidth]{fig/screenshots/w6_p10.eps}
+\end{figure}
+
+\newpage
+
+\begin{lstlisting}
+
+SELECT * FROM student JOIN takes ON student.ID=takes.ID; 
+-- W6P11
+\end{lstlisting}
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1.0\textwidth]{fig/screenshots/w6_p11_1.eps}
+\end{figure}
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1.0\textwidth]{fig/screenshots/w6_p11_2.eps}
+\end{figure}
+
+\newpage
+\begin{lstlisting}
+
+SELECT FROM student NATURAL LEFT OUTER JOIN takes; 
+-- W6P19
+\end{lstlisting}
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1.0\textwidth]{fig/screenshots/w6_p19.eps}
+\end{figure}
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1.0\textwidth]{fig/screenshots/w6_p19_2.eps}
+\end{figure}
+\newpage
+\begin{lstlisting}
+
+SELECT * FROM student NATURAL RIGHT OUTER JOIN takes; w6p20
+-- W6P20
+\end{lstlisting}
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1.0\textwidth]{fig/screenshots/w6_p20_1.eps}
+\end{figure}
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1.0\textwidth]{fig/screenshots/w6_p20_2.eps}
+\end{figure}
+\newpage
+
+\begin{lstlisting}
+
+SELECT * FROM (SELECT * FROM student WHERE dept_name = 'Comp. Sci')
+NATURAL FULL OUTER JOIN 2009)
+(SELECT * FROM takes WHERE semester = 'Spring' AND year =2009) 
+--This query won't work because MySQL doesn't support FULL OUTER JOIN, and there are syntax issues with parentheses and subquery structuring. Additionally, NATURAL FULL OUTER JOIN is not valid in MySQL.
+-- W6P21
+\end{lstlisting}
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1.0\textwidth]{fig/screenshots/w6_p21_1.eps}
+\end{figure}
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1.0\textwidth]{fig/screenshots/w6_p21_2.eps}
+\end{figure}
+\newpage
+
+\begin{lstlisting}
+
+CREATE VIEW faculty as SELECT ID, name, dept_name FROM instructor; w6p29
+-- W6P29
+\end{lstlisting}
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1.0\textwidth]{fig/screenshots/w6_p29_1.eps}
+\end{figure}
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1.0\textwidth]{fig/screenshots/w6_p29_2.eps}
+\end{figure}
+\newpage
+
+\begin{lstlisting}
+
+create view physics_fall_2009 as select course.course_id, sec_id, building, room_number from course, section where course.course_id section.course_id and course.dept_name = 'Physics' and section.semester = 'Fall' and section.year='2009'; 
+-- W6P30
+\end{lstlisting}
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1.0\textwidth]{fig/screenshots/w6_p30_1.eps}
+\end{figure}
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1.0\textwidth]{fig/screenshots/w6_p30_2.eps}
+\end{figure}
+\newpage
+
+\begin{lstlisting}
+
+INSERT INTO faculty VALUES ('30765', 'Green', 'Music'); 
+-- W6P31
+\end{lstlisting}
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1.0\textwidth]{fig/screenshots/w6_p31.eps}
+\end{figure}
+
+\begin{lstlisting}
+
+create view instructor_info as select ID, name, building from instructor, department where instructor. dept_name = department.dept_name; 
+-- W6P32
+\end{lstlisting}
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1.0\textwidth]{fig/screenshots/w6_p32.eps}
+\end{figure}
+\newpage
+
+\begin{lstlisting}
+
+START TRANSACTION;
+UPDATE takes SET grade = 'A+' WHERE takes.ID = '12121' AND (course_id, sec_id, semester, year) = ('SOC3020', 1, 'Fall', 2017);
+UPDATE student S SET tot_cred = (SELECT SUM(credits) FROM takes T JOIN course CON T.course_id = C.course_id WHERE T.ID = S.ID AND T.grade <> 'F' AND T.grade IS NOT NULL );
+commit; 
+-- W6P43
+\end{lstlisting}
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1.0\textwidth]{fig/screenshots/w6_p43_1.eps}
+\end{figure}
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1.0\textwidth]{fig/screenshots/w6_p43_2.eps}
+\end{figure}
+\newpage
+\section{2nd section}
+\subsection*{What is a database view?}
+
+A view is any relation that is not of the conceptual model but is made visible to a user as a ``virtual relation''. A view only stores the SQL query; it does not contain actual data. When it is used in a query, the view is substituted into the SQL query it stores.
+\subsection*{2.1 What are some advantages views have over base tables?}
+
+\begin{enumerate}
+    \item \textbf{Security:} Views can limit access to specific data in the underlying tables.
+    \item \textbf{Simplified Queries:} Views allow saving complex queries as virtual tables, making it easier to reuse these queries without needing to rewrite them each time.
+    \item \textbf{Data Abstraction and Independence:} Views provide a level of abstraction, allowing changes to the underlying table structure without impacting applications that rely on the view.
+\end{enumerate}
+
+\section{3rd section}
+\subsection*{3.1 What is a primary key? What characteristics does a good primary key have?}
+
+A primary key is a minimal superkey, that is, a set of one or more attributes whose values are guaranteed to identify tuples in the relation uniquely, but none of whose subsets is a superkey.
+
+\textbf{Characteristics of a good primary key:}
+\begin{enumerate}
+    \item \textbf{Uniqueness:} Each value in the primary key column or columns must be unique.
+    \item \textbf{Non-Null:} A primary key cannot contain NULL values.
+    \item \textbf{Constant:} A primary key should not change over time.
+    \item \textbf{Minimal:} A primary key should be as simple and contain minimal columns as possible.
+\end{enumerate}
+\newpage
+\section{4th section}
+\subsection*{4.1 Describe at your best major similarities and differences between a WHERE clause and a HAVING clause in SQL standard.}
+
+\textbf{Similarities:}
+\begin{enumerate}
+    \item \textbf{Filtering Data:} Both WHERE and HAVING clauses are used to filter the rows returned in a query based on specific conditions.
+    \item \textbf{Use in SELECT Statements:} Both clauses are commonly found in SELECT statements.
+    \item \textbf{Combine with Conditions:} Both support conditions using operators like =, <, >, IN, and logical operators (AND, OR, NOT).
+\end{enumerate}
+
+\textbf{Differences:}
+\begin{enumerate}
+    \item \textbf{Filtering Order:} WHERE clause filters rows before any grouping or aggregation, whereas HAVING filters groups or aggregated results after grouping.
+    \item \textbf{Usage Scope:} WHERE clause filters individual rows, while HAVING is used to filter based on aggregated values.
+    \item \textbf{Grouping Relation:} WHERE is used before GROUP BY, in contrast, HAVING is used after GROUP BY.
+    \item \textbf{Applicability:} HAVING can be used in any SELECT statement with aggregation, whereas WHERE can be used in SELECT, UPDATE, and DELETE statements.
+    \item \textbf{Aggregate Functions:} Unlike WHERE, HAVING can use aggregate functions (like SUM, COUNT).
+\end{enumerate}
+\section{5th section}
+\subsection*{5.1 Describe at your best what a foreign key is and how it relates to a primary key.}
+
+A foreign key is a set of attributes in one table that are guaranteed to be the primary key of a referencing table.
+
+\newpage
+\section{ 6th section}
+
+
+
+\begin{lstlisting}
+-- i. By using an appropriate subquery in the appropriate SQL clause, find all sections that had the maximum enrollment and display each of them by section id and enrollment.
+
+SELECT t.course_id, t.sec_id, t.semester, t.year, COUNT(*) as enrollment
+FROM takes t
+GROUP BY t.course_id, t.sec_id, t.semester, t.year
+HAVING COUNT(*) = (
+    SELECT COUNT(*)
+    FROM takes
+    GROUP BY course_id, sec_id, semester, year
+    ORDER BY COUNT(*) DESC
+    LIMIT 1
+);
+\end{lstlisting}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1.0\textwidth]{fig/screenshots/6/61.eps}
+\end{figure}
+\newpage
+
+\begin{lstlisting}
+-- ii. Find all students who have two or more F grades as per the takes relation, and list them along with the F grades. Display the identifier (primary key) of each student.
+
+WITH StudentFailCount AS (
+    SELECT ID, COUNT(*) as f_count
+    FROM takes
+    WHERE grade = 'F'
+    GROUP BY ID
+    HAVING COUNT(*) >= 2
+)
+SELECT 
+    t.ID,
+    s.name,
+    t.course_id,
+    c.title as course_title,
+    t.semester,
+    t.year,
+    t.grade
+FROM StudentFailCount sfc
+JOIN takes t ON sfc.ID = t.ID
+JOIN student s ON s.ID = t.ID
+JOIN course c ON c.course_id = t.course_id
+WHERE t.grade = 'F'
+ORDER BY t.ID, t.year, t.semester;
+
+\end{lstlisting}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1.0\textwidth]{fig/screenshots/6/63.eps}
+\end{figure}
+
+
+\newpage
+
+\begin{lstlisting}
+-- iii. Find all rooms that have been assigned to more than one section at the same time. Display the rooms in descending order of capacity along with the assigned sections.
+
+SELECT 
+    c.building,
+    c.room_number,
+    c.capacity,
+    GROUP_CONCAT(CONCAT(s.course_id, '-', s.sec_id, ' (', s.semester, ' ', s.year, ')') ORDER BY s.course_id, s.sec_id) AS assigned_sections
+FROM 
+    classroom AS c
+JOIN 
+    section AS s ON c.building = s.building AND c.room_number = s.room_number
+GROUP BY 
+    c.building, c.room_number, c.capacity, s.semester, s.year, s.time_slot_id
+HAVING 
+    COUNT(*) > 1
+ORDER BY 
+    c.capacity DESC;
+\end{lstlisting}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1.0\textwidth]{fig/screenshots/6/64.eps}
+\end{figure}
+
+\newpage
+
+\begin{lstlisting}
+-- iv. Find the maximum and minimum enrollment across all sections, considering only sections that had some enrollment. (Don’t worry about those that had no students taking that section.)
+
+WITH SectionEnrollments AS (
+    SELECT 
+        course_id,
+        sec_id,
+        semester,
+        year,
+        COUNT(*) as enrollment
+    FROM takes
+    GROUP BY course_id, sec_id, semester, year
+)
+SELECT 
+    MAX(enrollment) as maximum_enrollment,
+    MIN(enrollment) as minimum_enrollment
+FROM SectionEnrollments;
+\end{lstlisting}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1.0\textwidth]{fig/screenshots/6/65.eps}
+\end{figure}
+
+
+\newpage
+
+\begin{lstlisting}
+
+-- v. Find all sections that had the maximum enrollment (along with the enrollment), using a subquery. Display the identifier (primary key) of each section.
+
+WITH SectionEnrollments AS (
+    SELECT 
+        course_id,
+        sec_id,
+        semester,
+        year,
+        COUNT(*) as enrollment
+    FROM takes
+    GROUP BY course_id, sec_id, semester, year
+)
+SELECT 
+    se.course_id,
+    se.sec_id,
+    se.semester,
+    se.year,
+    se.enrollment
+FROM SectionEnrollments se
+WHERE se.enrollment = (
+    SELECT MAX(enrollment)
+    FROM SectionEnrollments
+)
+ORDER BY se.course_id, se.sec_id, se.semester, se.year;
+\end{lstlisting}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1.0\textwidth]{fig/screenshots/6/66.eps}
+\end{figure}
+
+
+\newpage
+
+\begin{lstlisting}
+-- vi.Find all courses whose identifier (i.e., primary key) starts with the string "CS-".  Display identifier and title of each course.
+SELECT course_id, title
+FROM course
+WHERE course_id LIKE 'CS-%'
+ORDER BY course_id;
+\end{lstlisting}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1.0\textwidth]{fig/screenshots/6/67.eps}
+\end{figure}
+\newpage
+\begin{lstlisting}
+-- vii. Find instructors who have taught all the above courses by using the "NOT EXISTS ... EXCEPT ..." combination of SQL statements.
+
+SELECT DISTINCT i.ID, i.name
+FROM instructor i
+WHERE NOT EXISTS (
+    SELECT course_id 
+    FROM course 
+    WHERE course_id LIKE 'CS-%'  
+    EXCEPT
+    SELECT DISTINCT course_id
+    FROM teaches
+    WHERE ID = i.ID
+);
+\end{lstlisting}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1.0\textwidth]{fig/screenshots/6/68.eps}
+\end{figure}
+
+\newpage
+\begin{lstlisting}
+-- viii. Delete all data of students who got grade "F" in four (academic) years.
+
+START TRANSACTION;
+DELETE FROM takes 
+WHERE ID IN (
+    SELECT ID
+    FROM takes
+    WHERE grade = 'F'
+    AND year >= YEAR(CURDATE()) - 4
+);
+DELETE FROM student
+WHERE ID IN (
+    SELECT ID
+    FROM takes
+    WHERE grade = 'F'
+    AND year >= YEAR(CURDATE()) - 4
+);
+COMMIT;
+\end{lstlisting}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1.0\textwidth]{fig/screenshots/6/69.eps}
+\end{figure}
+
+\newpage
+\begin{lstlisting}
+-- ix. Insert all data of students you deleted in the previous query viii.
+
+-- Since we did not delete anyone, there is no need to insert:
+
+
+\newpage
+\begin{lstlisting}
+-- x. Write a transaction to correctly update the total credits of a student (choose the student) who passed an exam such student took (cf. table takes).
+
+START TRANSACTION;
+UPDATE student s
+SET tot_cred = (
+    SELECT SUM(c.credits)
+    FROM takes t
+    JOIN course c ON t.course_id = c.course_id
+    WHERE t.ID = s.ID
+    AND t.grade IS NOT NULL
+    AND t.grade != 'F'
+)
+WHERE s.ID = '12345';
+COMMIT;
+\end{lstlisting}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1.0\textwidth]{fig/screenshots/6/71.eps}
+\end{figure}
+
+\newpage
+\begin{lstlisting}
+-- xi. Write a transaction to correctly update two accounts, each modelled by using a table, say account1 and account2 respectively, in case of a money transfer of amount 1000 USD from account with data in account1 to account with data in account2.
+
+DELIMITER //
+
+CREATE PROCEDURE TransferFunds()
+BEGIN
+   
+    CREATE TABLE IF NOT EXISTS account1 (
+        account_id INT PRIMARY KEY,
+        balance DECIMAL(10, 2) NOT NULL CHECK (balance >= 0)
+    );
+
+    CREATE TABLE IF NOT EXISTS account2 (
+        account_id INT PRIMARY KEY,
+        balance DECIMAL(10, 2) NOT NULL CHECK (balance >= 0)
+    );
+
+    
+    START TRANSACTION;
+
+    
+    UPDATE account1
+    SET balance = balance - 1000
+    WHERE account_id = 1 AND balance >= 1000;
+
+    
+    IF ROW_COUNT() = 1 THEN
+       
+        UPDATE account2
+        SET balance = balance + 1000
+        WHERE account_id = 2;
+
+        
+        COMMIT;
+    ELSE
+        
+        ROLLBACK;
+    END IF;
+END //
+
+DELIMITER ;
+\end{lstlisting}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1.0\textwidth]{fig/screenshots/6/74.eps}
+\end{figure}
+
+\newpage
+\begin{lstlisting}
+-- xii. Write a view that represents, in decreasing order by sum of credits, the ID, name and sum of credits computed department by department (of each student) that students obtained from taking and passing the courses.
+
+CREATE VIEW student_database_credits AS
+SELECT s.ID, s.name, s.dept_name, SUM(c.credits) as total_credits
+FROM student s
+JOIN takes t ON s.ID = t.ID
+JOIN course c ON t.course_id = c.course_id
+WHERE t.grade IS NOT NULL 
+AND t.grade != 'F'
+GROUP BY s.ID, s.name, s.dept_name
+ORDER BY total_credits DESC;
+\end{lstlisting}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1.0\textwidth]{fig/screenshots/6/75.eps}
+\end{figure}
+
+\newpage
+\section{7th section}
+
+\begin{lstlisting}
+-- i. LIKE (Simple pattern matching, case sensitive)
+SELECT * FROM instructor
+WHERE name LIKE '%son%';
+\end{lstlisting}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1.0\textwidth]{fig/screenshots/7/76.eps}
+\end{figure}
+\newpage
+\begin{lstlisting}
+-- ii. ILIKE (Simple pattern matching, case insensitive)
+SELECT * FROM employees
+WHERE name ILIKE '%john%';
+-- The error occured because mysql does not support the ILIKE operator, which is specific to PostgreSQL.
+
+\end{lstlisting}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1.0\textwidth]{fig/screenshots/7/77.eps}
+\end{figure}
+\newpage
+\begin{lstlisting}
+-- iii. LIMIT (Constrain on number of rows returned; use with and without offset)
+SELECT * FROM instructor
+ORDER BY salary DESC
+LIMIT 5 OFFSET 2;
+\end{lstlisting}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1.0\textwidth]{fig/screenshots/7/78.eps}
+\end{figure}
+
+\newpage
+\begin{lstlisting}
+-- iv. ROUND (Numeric function; Round the argument)
+SELECT dept_name, ROUND(AVG(salary), 2) as avg_salary
+FROM instructor
+GROUP BY dept_name;
+\end{lstlisting}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1.0\textwidth]{fig/screenshots/7/79.eps}
+\end{figure}
+
+\newpage
+\begin{lstlisting}
+-- v. TRUNCATE (Numeric function; Truncate to specified number of decimal places)
+SELECT dept_name, TRUNCATE(AVG(salary), 0) as avg_salary
+FROM instructor
+GROUP BY dept_name;
+\end{lstlisting}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1.0\textwidth]{fig/screenshots/7/80.eps}
+\end{figure}
+
+\newpage
+\begin{lstlisting}
+-- vi. WITH (Common Table Expressions)
+WITH dept_stats AS (
+    SELECT dept_name, AVG(salary) as avg_salary
+    FROM instructor
+    GROUP BY dept_name
+)
+SELECT *
+FROM dept_stats
+WHERE avg_salary > 70000;
+\end{lstlisting}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1.0\textwidth]{fig/screenshots/7/81.eps}
+\end{figure}
+
+\newpage
+\begin{lstlisting}
+-- vii. CONCAT (String function; Return concatenated string)
+SELECT CONCAT(course_id, ': ', title) as course_info
+FROM course;
+\end{lstlisting}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1.0\textwidth]{fig/screenshots/7/82.eps}
+\end{figure}
+
+\newpage
+\begin{lstlisting}
+-- viii. LENGTH (String function; Return the length of a string in bytes)
+SELECT name, LENGTH(name) as name_length
+FROM instructor
+ORDER BY name_length DESC;
+\end{lstlisting}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1.0\textwidth]{fig/screenshots/7/83.eps}
+\end{figure}
+
+\newpage
+\begin{lstlisting}
+-- ix. REPEAT (String function; Repeat a string the specified number of times)
+SELECT course_id, REPEAT('*', credits) as credit_stars
+FROM course;
+\end{lstlisting}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1.0\textwidth]{fig/screenshots/7/84.eps}
+\end{figure}
+
+\newpage
+\begin{lstlisting}
+-- x. REPLACE (String function; Replace occurrences of a specified string)
+SELECT REPLACE(dept_name, 'Comp.', 'Computer') as dept_full_name
+FROM department;
+\end{lstlisting}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1.0\textwidth]{fig/screenshots/7/85.eps}
+\end{figure}
+
+\newpage
+\begin{lstlisting}
+-- xi. REVERSE (String function; Reverse the characters in a string)
+SELECT name, REVERSE(name) as reversed_name
+FROM instructor;
+\end{lstlisting}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1.0\textwidth]{fig/screenshots/7/86.eps}
+\end{figure}
+
+\newpage
+\begin{lstlisting}
+-- xii. TIMEDIFF (Date & time function; Subtract time)
+SELECT time_slot_id,
+       TIMEDIFF(
+           CONCAT(end_hr, ':', end_min),
+           CONCAT(start_hr, ':', start_min)
+       ) as duration
+FROM time_slot;
+\end{lstlisting}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1.0\textwidth]{fig/screenshots/7/88.eps}
+\end{figure}
+
+\newpage
+\begin{lstlisting}
+-- xiii. TIMESTAMP (Date & time function)
+SELECT course_id, 
+       TIMESTAMP(CONCAT(year, '-', semester, '-01')) as course_start
+FROM section;
+\end{lstlisting}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1.0\textwidth]{fig/screenshots/7/89.eps}
+\end{figure}
+
+\newpage
+\begin{lstlisting}
+-- xiv. CURRENT_DATE (Date & time function; Return the current date)
+SELECT *, 
+       DATEDIFF(CURRENT_DATE(), STR_TO_DATE(CONCAT(year, '-01-01'), '%Y-%m-%d')) as days_since_start
+FROM section;
+\end{lstlisting}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1.0\textwidth]{fig/screenshots/7/90.eps}
+\end{figure}
+
+\newpage
+\begin{lstlisting}
+-- xv. CURRENT_TIME (Date & time function; Return the current time)
+SELECT time_slot_id,
+       CASE 
+           WHEN CURRENT_TIME() BETWEEN 
+               CONCAT(start_hr, ':', start_min) AND 
+               CONCAT(end_hr, ':', end_min)
+           THEN 'Current'
+           ELSE 'Not Current'
+       END as slot_status
+FROM time_slot;
+\end{lstlisting}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1.0\textwidth]{fig/screenshots/7/91.eps}
+\end{figure}
+\end{document}

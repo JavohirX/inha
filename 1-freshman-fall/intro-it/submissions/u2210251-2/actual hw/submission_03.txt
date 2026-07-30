@@ -1,0 +1,5 @@
+(a) 01111011 (1) at the end were truncated
+(b) 01101111 (0) at the exponent and (1111) at the menissa were truncated
+(c) 01111010 (11) at the exponent was truncated
+(d) 01011010
+(e) 01011111 infinite number of 1s after point were truncated

@@ -1,0 +1,43 @@
+{
+  "name": "my-electron-app",
+  "version": "1.0.0",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron .",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "electron-builder"
+  },
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "build": {
+    "asar": true,
+    "extraResources": [
+      {
+        "from": "libtcp_client.so",
+        "to": "libtcp_client.so"
+      },
+      {
+        "from": "./build",
+        "to": "build"
+      }
+    ],
+    "appId": "com.doctors.yourappname",
+    "productName": "Doctorsreservation",
+    "linux": {
+      "target": [
+        "AppImage",
+        "deb",
+        "rpm"
+      ]
+    }
+  },
+  "devDependencies": {
+    "electron": "^33.2.0",
+    "electron-builder": "^25.1.8",
+    "electron-rebuild": "^3.2.9"
+  },
+  "dependencies": {
+    "koffi": "^2.9.2"
+  }
+}

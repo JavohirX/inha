@@ -1,0 +1,97 @@
+DeclareGlobal _start
+
+// Data section
+.data
+    input: string = "Enter a string: "
+    output: string = "Output: "
+    str: char array of size 8192
+    strF: string = "%s"
+    newLine: string = "\n"
+
+// Text section
+.text
+_start:
+    DisplayPrompt(input)
+    ReadInputString(str, 1024)
+    r8 = LengthOf(str) - 1
+    r9 = 0
+    CallLowerCase(str)
+    PrintText(output, strF, str)
+    CallUpperCase(str)
+    PrintText(output, strF, str)
+    CallCapital(str)
+    PrintText(output, strF, str)
+
+end:
+    ExitProgram()
+
+FUNCTION CallLowerCase(str):
+    FOR EACH character IN str DO:
+        IF character is uppercase THEN
+            LowerCase(character)
+        END IF
+    END FOR
+
+FUNCTION CallUpperCase(str):
+    FOR EACH character IN str DO:
+        IF character is lowercase THEN
+            UpperCase(character)
+        END IF
+    END FOR
+
+FUNCTION CallCapital(str):
+    isFirstLetter = true
+    FOR EACH character IN str DO:
+        IF character is space THEN
+            isFirstLetter = true
+        ELSE:
+            IF isFirstLetter THEN
+                Capital(character)
+                isFirstLetter = false
+            END IF
+        END IF
+    END FOR
+
+FUNCTION PrintText(output, format, str):
+    PrintOutput(output)
+    PrintFormattedString(format, str)
+
+FUNCTION LowerCase(character):
+    IF character >= 'A' AND character <= 'Z' THEN
+        character = character + ('a' - 'A')
+    END IF
+
+FUNCTION UpperCase(character):
+    IF character >= 'a' AND character <= 'z' THEN
+        character = character - ('a' - 'A')
+    END IF
+
+FUNCTION Capital(character):
+    IF character >= 'a' AND character <= 'z' THEN
+        character = character - ('a' - 'A')
+    END IF
+
+FUNCTION LetterUpperCase(character):
+    IF character >= 'a' AND character <= 'z' THEN
+        character = character - ('a' - 'A')
+    END IF
+
+FUNCTION LetterLowerCase(character):
+    IF character >= 'A' AND character <= 'Z' THEN
+        character = character + ('a' - 'A')
+    END IF
+
+FUNCTION DisplayPrompt(input):
+    PrintOutput(input)
+
+FUNCTION ReadInputString(str, length):
+    ReadInput(str, length)
+
+FUNCTION PrintFormattedString(format, str):
+    PrintFormatted(format, str)
+
+FUNCTION PrintOutput(output):
+    Print(output)
+
+FUNCTION ExitProgram():
+    ExitProgram()

@@ -1,0 +1,54 @@
+user_msg = "The elements of the list: "
+sum_msg = "\nSum is: %d\n"
+keyFound_msg = "Key %d is found at location "
+location_msg = " %d in the list\n"
+notFoundFormat = "Key %d is not found in the list\n"
+occur_format = "Key occurs %d times in the list\n"
+av_format = "Average is: %lf\n"
+key = 32
+loop = 1
+list = [12, 23, 32, 84, 121, 34, 23, 32, 93, 22, 56, 32, 948, 123, 99, 23, 32, 289, 99, 34]
+counter = 20
+count = 0
+n_format = "%d  "
+
+ _start():
+    # Print the message indicating the elements of the list
+    print(user_msg)
+
+    # Print each element of the array
+    for every element1 in list:
+        print(n_format + element)
+
+    # Calculate the sum of elements in the array
+    for every element1 in list:
+    sumRegister += element1
+
+    # Print the sum
+    print(sum_msg + sumRegister)
+
+    # Calculate the average of elements in the array
+    if sumRegister != 0:
+        averageRegister = sumRegister / counter
+
+    # Print the average
+    print(av_format + averageRegister)
+
+    # Search for the key in the array
+    
+    for every element1 in the list:
+        if element1 == key:
+            # If the key is found, print its location
+            print(keyFound_msg + key)
+            print(location_msg indexRegister)
+            countRegister += 1
+	indexRegister += 1
+
+    # If the key is not found, print a message
+    if countRegister == 0:
+        print(notFoundFormat + key)
+
+    # If the key is found, print the occurrence count
+    else:
+        print(occur_format + countRegister)
+exit

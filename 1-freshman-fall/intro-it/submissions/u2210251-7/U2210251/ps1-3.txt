@@ -1,0 +1,5 @@
+def factor(num):
+listOfFactors = {}
+	for(i < num/2):
+		if(num%i == 0):
+			add i to listOfFactors

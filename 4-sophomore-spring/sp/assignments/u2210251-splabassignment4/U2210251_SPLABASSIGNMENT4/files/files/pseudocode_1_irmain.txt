@@ -1,0 +1,81 @@
+INCLUDE Stdio.h
+INCLUDE Stdlib.h
+INCLUDE "matrixLib.h"
+
+FUNCTION main
+    DECLARE a, b, c as POINTERS TO INTEGERS
+    DECLARE x, y, z as POINTERS TO DOUBLES
+    DECLARE n as INTEGER
+
+    PRINT "Please enter the size of your nxn matrices: "
+    READ n
+
+    a <- ALLOCATE ARRAY OF n * n INTEGERS
+    b <- ALLOCATE ARRAY OF n * n INTEGERS
+    c <- ALLOCATE ARRAY OF n * n INTEGERS
+
+    PRINT "Please enter your first integer matrix: "
+    CALL imatfill(a, n)
+
+    PRINT "Please enter your second integer matrix: "
+    CALL imatfill(b, n)
+
+    PRINT "The addition of matrices is equal to: "
+    CALL imatadd(a, b, c, n)
+    CALL imatprint(c, n)
+
+    PRINT "The subtraction of matrices is equal to: "
+    CALL imatsub(a, b, c, n)
+    CALL imatprint(c, n)
+
+    PRINT "The multiplication of matrices is equal to: "
+    CALL imatmult(a, b, c, n)
+    CALL imatprint(c, n)
+
+    PRINT "The transpose of matrix A is equal to: "
+    CALL imattrans(a, c, n)
+    CALL imatprint(c, n)
+
+    PRINT "The transpose of matrix B is equal to: "
+    CALL imattrans(b, c, n)
+    CALL imatprint(c, n)
+
+    x <- ALLOCATE ARRAY OF n * n DOUBLES
+    y <- ALLOCATE ARRAY OF n * n DOUBLES
+    z <- ALLOCATE ARRAY OF n * n DOUBLES
+
+    PRINT "Please enter your first real matrix: "
+    CALL rmatfill(x, n)
+
+    PRINT "Please enter your second real matrix: "
+    CALL rmatfill(y, n)
+
+    PRINT "The addition of matrices is equal to: "
+    CALL rmatadd(x, y, z, n)
+    CALL rmatprint(z, n)
+
+    PRINT "The subtraction of matrices is equal to: "
+    CALL rmatsub(x, y, z, n)
+    CALL rmatprint(z, n)
+
+    PRINT "The multiplication of matrices is equal to: "
+    CALL rmatmult(x, y, z, n)
+    CALL rmatprint(z, n)
+
+    PRINT "The transpose of matrix A is equal to: "
+    CALL rmattrans(x, z, n)
+    CALL rmatprint(z, n)
+
+    PRINT "The transpose of matrix B is equal to: "
+    CALL rmattrans(y, z, n)
+    CALL rmatprint(z, n)
+
+    DEALLOCATE a
+    DEALLOCATE b
+    DEALLOCATE c
+    DEALLOCATE x
+    DEALLOCATE y
+    DEALLOCATE z
+
+    RETURN 0
+END FUNCTION

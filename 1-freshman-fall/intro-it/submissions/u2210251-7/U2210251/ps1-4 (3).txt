@@ -1,0 +1,4 @@
+def towersOfHanoi(n):
+	transfer all the n-1 towers to the intermediate
+	and change the inter to source, source to inter
+	towersOfHanoi(n-1)
